@@ -1,0 +1,70 @@
+@import 'tailwindcss';
+
+:root {
+	--color-primary: #f59e0b;
+	--color-primary-dark: #d97706;
+	--color-primary-light: #fbbf24;
+}
+
+/* Smooth scrollbar */
+html {
+	scrollbar-width: thin;
+	scrollbar-color: var(--color-primary) #1f2937;
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+	outline: 2px solid var(--color-primary);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+
+/* Selection style */
+::selection {
+	background-color: var(--color-primary);
+	color: #ffffff;
+}
+
+/* Section fade-in animation */
+@keyframes fadeInUp {
+	from {
+		opacity: 0;
+		transform: translateY(30px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.animate-fade-in-up {
+	animation: fadeInUp 0.6s ease-out forwards;
+}
+
+/* Glow effect */
+.glow {
+	box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+.glow-text {
+	text-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+}
+
+/* Improve text rendering */
+body {
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
