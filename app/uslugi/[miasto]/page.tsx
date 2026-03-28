@@ -3,6 +3,85 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getCityBySlug, getAllCitySlugs, getServices, getContactInfo, getSeoSettings } from '@/lib/queries'
 
+// Sub-services grouped by main category (synced with GBP)
+const serviceSubItems: Record<string, string[]> = {
+	'Instalacje elektryczne': [
+		'Montaż instalacji elektrycznej',
+		'Montaż gniazdek i przełączników',
+		'Montaż przewodu uziemiającego',
+		'Montaż części elektrycznych',
+		'Zmiana okablowania',
+	],
+	'Naprawy awaryjne 24/7': [
+		'Naprawa instalacji elektrycznej',
+		'Naprawa gniazdek i włączników',
+		'Naprawa paneli elektrycznych',
+		'Naprawa urządzeń elektrycznych',
+		'Przywracanie zasilania',
+	],
+	'Modernizacja instalacji': [
+		'Wymiana panelu elektrycznego',
+		'Wymiana bezpieczników',
+		'Wymiana opornika cieplnego',
+		'Przenoszenie gniazdek',
+		'Przeglądy instalacji',
+	],
+	'Pomiary elektryczne': [
+		'Pomiary ochronne',
+		'Rezystancja izolacji',
+		'Impedancja pętli zwarcia',
+		'Protokoły i certyfikaty',
+	],
+	'Oświetlenie LED': ['Instalacja oświetlenia', 'Oświetlenie zewnętrzne', 'Naprawa oświetlenia', 'Montaż wentylatorów'],
+	'Smart Home': ['Instalacja alarmu', 'System zabezpieczeń', 'Ładowarka EV', 'Bramy automatyczne'],
+}
+
+// Polish locative case (miejscownik) for city names — "w [mieście]"
+const cityLocative: Record<string, string> = {
+	Rzeszów: 'Rzeszowie',
+	Lublin: 'Lublinie',
+	Kielce: 'Kielcach',
+	Tarnów: 'Tarnowie',
+	Zamość: 'Zamościu',
+	Przemyśl: 'Przemyślu',
+	Tarnobrzeg: 'Tarnobrzegu',
+	Sandomierz: 'Sandomierzu',
+	Mielec: 'Mielcu',
+	Jarosław: 'Jarosławiu',
+	Dębica: 'Dębicy',
+	Kraśnik: 'Kraśniku',
+	Nisko: 'Nisku',
+	'Stalowa Wola': 'Stalowej Woli',
+	'Radomyśl nad Sanem': 'Radomyślu nad Sanem',
+}
+
+// Polish genitive case (dopełniacz) for city names — "do [miasta]"
+const cityGenitive: Record<string, string> = {
+	Rzeszów: 'Rzeszowa',
+	Lublin: 'Lublina',
+	Kielce: 'Kielc',
+	Tarnów: 'Tarnowa',
+	Zamość: 'Zamościa',
+	Przemyśl: 'Przemyśla',
+	Tarnobrzeg: 'Tarnobrzega',
+	Sandomierz: 'Sandomierza',
+	Mielec: 'Mielca',
+	Jarosław: 'Jarosławia',
+	Dębica: 'Dębicy',
+	Kraśnik: 'Kraśnika',
+	Nisko: 'Niska',
+	'Stalowa Wola': 'Stalowej Woli',
+	'Radomyśl nad Sanem': 'Radomyśla nad Sanem',
+}
+
+// Helpers: get declined form, fallback to original name
+function getLocative(name: string): string {
+	return cityLocative[name] || name
+}
+function getGenitive(name: string): string {
+	return cityGenitive[name] || name
+}
+
 // ─── Static generation for all cities ────────────────────
 export async function generateStaticParams() {
 	const slugs = await getAllCitySlugs()
@@ -24,7 +103,7 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 	const title = city.metaTitle || `Elektryk ${city.name} - Usługi Elektryczne | Elektryk Majkel`
 	const description =
 		city.metaDescription ||
-		`Profesjonalne usługi elektryczne w mieście ${city.name}. Instalacje, naprawy, modernizacje. Certyfikowany elektryk SEP. Dojazd z Radomyśla nad Sanem.`
+		`Profesjonalne usługi elektryczne w ${getLocative(city.name)}. Instalacje, naprawy, modernizacje. Certyfikowany elektryk SEP. Dojazd z Radomyśla nad Sanem.`
 
 	const keywords = [
 		`elektryk ${city.name}`,
@@ -83,7 +162,68 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 
 	const description =
 		city.pageDescription ||
-		`Szukasz zaufanego elektryka w mieście ${city.name}? ${businessName} oferuje profesjonalne usługi elektryczne z dojazdem do ${city.name}${distanceText ? ` (${distanceText})` : ''}. Posiadamy uprawnienia SEP i gwarantujemy solidne wykonanie każdego zlecenia.`
+		`Szukasz zaufanego elektryka w ${getLocative(city.name)}? ${businessName} oferuje profesjonalne usługi elektryczne z dojazdem do ${getGenitive(city.name)}${distanceText ? ` (${distanceText})` : ''}. Posiadamy uprawnienia SEP i gwarantujemy solidne wykonanie każdego zlecenia.`
+
+	// Full GBP services list for JSON-LD
+	const gbpDetailedServices = [
+		'Instalacja oświetlenia',
+		'Instalacja oświetlenia zewnętrznego',
+		'Montaż gniazdek elektrycznych i przełączników',
+		'Naprawa gniazdek elektrycznych i włączników',
+		'Przenoszenie gniazdek elektrycznych i włączników',
+		'Instalacja alarmu ogólnego',
+		'Instalacja systemu zabezpieczeń',
+		'Montaż części elektrycznych',
+		'Montaż instalacji elektrycznej',
+		'Montaż ładowarki do samochodów elektrycznych',
+		'Montaż przewodu uziemiającego',
+		'Montaż wentylatora',
+		'Naprawa instalacji elektrycznej',
+		'Naprawa oświetlenia',
+		'Naprawa paneli elektrycznych',
+		'Naprawa wentylatorów',
+		'Naprawa urządzeń elektrycznych',
+		'Przeglądy instalacji elektrycznej',
+		'Przywracanie zasilania elektrycznego',
+		'Wymiana bezpieczników elektrycznych',
+		'Wymiana elektrycznego opornika cieplnego',
+		'Wymiana lub modernizacja panelu elektrycznego',
+		'Zmiana okablowania',
+		'Bramy automatyczne',
+	]
+
+	const allServiceItems = [
+		...services.map(s => ({
+			'@type': 'Offer' as const,
+			itemOffered: {
+				'@type': 'Service' as const,
+				name: s.title,
+				description: s.description,
+				areaServed: { '@type': 'City' as const, name: city.name },
+				provider: { '@type': 'Electrician' as const, name: businessName },
+			},
+		})),
+		...gbpDetailedServices
+			.filter(name => !services.some(s => s.title === name))
+			.map(name => ({
+				'@type': 'Offer' as const,
+				itemOffered: {
+					'@type': 'Service' as const,
+					name,
+					areaServed: { '@type': 'City' as const, name: city.name },
+					provider: { '@type': 'Electrician' as const, name: businessName },
+				},
+			})),
+	]
+
+	const hasOfferCatalog =
+		allServiceItems.length > 0
+			? {
+					'@type': 'OfferCatalog',
+					name: `Usługi elektryczne - ${city.name}`,
+					itemListElement: allServiceItems,
+				}
+			: undefined
 
 	// JSON-LD for this city
 	const jsonLd = {
@@ -129,28 +269,55 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 						closes: '14:00',
 					},
 				],
-		hasOfferCatalog:
-			services.length > 0
-				? {
-						'@type': 'OfferCatalog',
-						name: `Usługi elektryczne - ${city.name}`,
-						itemListElement: services.map(s => ({
-							'@type': 'Offer',
-							itemOffered: {
-								'@type': 'Service',
-								name: s.title,
-								description: s.description,
-								areaServed: { '@type': 'City', name: city.name },
-								provider: { '@type': 'Electrician', name: businessName },
-							},
-						})),
-					}
-				: undefined,
+		hasOfferCatalog,
 		parentOrganization: {
 			'@type': 'Electrician',
 			name: businessName,
 			url: 'https://elektrykmajkel.pl',
 		},
+	}
+
+	// City-specific FAQ (based on main FAQ, localized per city)
+	const cityFaqs = [
+		{
+			question: `Ile kosztuje elektryk w ${getLocative(city.name)}?`,
+			answer: `Koszt usługi elektrycznej w ${getLocative(city.name)} zależy od rodzaju zlecenia. Dojazd z Radomyśla nad Sanem${distanceText ? ` (${distanceText})` : ''} jest wliczony w cenę. Wycena jest zawsze bezpłatna — zadzwoń, opisz problem, a podamy orientacyjny koszt przed przyjazdem.`,
+		},
+		{
+			question: `Jak szybko dojedzie elektryk do ${getGenitive(city.name)}?`,
+			answer: `W przypadku awarii staramy się dotrzeć do ${getGenitive(city.name)} w ciągu ${city.distanceKm && city.distanceKm <= 30 ? '1-2 godzin' : '2-3 godzin'}. Przy planowanych zleceniach umawiamy się na konkretny, dogodny termin. Jesteśmy dostępni awaryjnie 24/7.`,
+		},
+		{
+			question: `Czy elektryk pracuje w weekendy w ${getLocative(city.name)}?`,
+			answer: `Tak — w soboty pracujemy w godzinach 8:00-14:00, również z dojazdem do ${getGenitive(city.name)}. W nagłych awariach (zwarcia, brak prądu) jesteśmy dostępni 24/7, włącznie z niedzielami i świętami.`,
+		},
+		{
+			question: `Jakie usługi elektryczne oferujecie w ${getLocative(city.name)}?`,
+			answer: `W ${getLocative(city.name)} oferujemy pełen zakres usług: instalacje elektryczne, naprawy awaryjne, modernizację instalacji, pomiary elektryczne z protokołami, oświetlenie LED, smart home, montaż ładowarek EV, bramy automatyczne, alarmy i systemy zabezpieczeń.`,
+		},
+		{
+			question: `Czy wystawiacie fakturę za usługi w ${getLocative(city.name)}?`,
+			answer:
+				'Tak, wystawiamy faktury VAT za wszystkie wykonane prace. Na życzenie klienta przygotowujemy również szczegółowy kosztorys przed rozpoczęciem zlecenia.',
+		},
+		{
+			question: `Czy elektryk w ${getLocative(city.name)} posiada uprawnienia?`,
+			answer: `Tak — posiadamy pełne uprawnienia SEP (Stowarzyszenie Elektryków Polskich) do prac przy instalacjach do 1 kV. Wszystkie usługi w ${getLocative(city.name)} wykonujemy zgodnie z aktualnymi normami i przepisami.`,
+		},
+	]
+
+	// FAQPage JSON-LD for city
+	const faqJsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'FAQPage',
+		mainEntity: cityFaqs.map(faq => ({
+			'@type': 'Question',
+			name: faq.question,
+			acceptedAnswer: {
+				'@type': 'Answer',
+				text: faq.answer,
+			},
+		})),
 	}
 
 	// BreadcrumbList JSON-LD
@@ -183,6 +350,7 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 		<>
 			<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 			<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
+			<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 
 			{/* Navigation bar */}
 			<nav className="bg-gray-950 text-white" aria-label="Nawigacja powrót">
@@ -265,7 +433,7 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 							Usługi elektryczne — <span className="text-amber-700">{city.name}</span>
 						</h2>
 						<p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
-							Oferujemy pełen zakres usług elektrycznych z dojazdem do {city.name} i okolic.
+							Oferujemy pełen zakres usług elektrycznych z dojazdem do {getGenitive(city.name)} i okolic.
 						</p>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 							{services.map(service => (
@@ -288,7 +456,18 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 										</svg>
 									</div>
 									<h3 className="font-bold text-lg mb-2">{service.title}</h3>
-									<p className="text-gray-600 text-sm leading-relaxed">{service.description}</p>
+									<p className="text-gray-600 text-sm leading-relaxed mb-3">{service.description}</p>
+									{serviceSubItems[service.title] && (
+										<div className="flex flex-wrap gap-1.5 pt-3 border-t border-gray-100">
+											{serviceSubItems[service.title].map(sub => (
+												<span
+													key={sub}
+													className="text-xs bg-amber-50 text-amber-700 border border-amber-200/60 px-2 py-0.5 rounded-full">
+													{sub}
+												</span>
+											))}
+										</div>
+									)}
 								</div>
 							))}
 						</div>
@@ -297,21 +476,24 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 
 				{/* Why choose us */}
 				<section className="py-16 sm:py-20 bg-[#f3f2ef]">
-					<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-						<h2 className="text-2xl sm:text-3xl font-bold text-center mb-12">
-							Dlaczego warto wybrać <span className="text-amber-700">{businessName}</span>?
-						</h2>
-						<div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
+					<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center mb-12">
+							<span className="text-amber-700 font-semibold text-sm uppercase tracking-wider">Dlaczego my</span>
+							<h2 className="text-2xl sm:text-3xl font-bold mt-3">
+								Dlaczego warto wybrać{' '}
+								<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-700">
+									{businessName}
+								</span>
+								?
+							</h2>
+						</div>
+						<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 							{[
 								{
 									title: 'Uprawnienia SEP',
+									description: `Posiadamy pełne uprawnienia SEP do prac przy instalacjach elektrycznych do 1 kV. Każde zlecenie w ${getLocative(city.name)} wykonujemy zgodnie z normami.`,
 									icon: (
-										<svg
-											className="w-7 h-7 text-amber-700"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											aria-hidden="true">
+										<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 											<path
 												strokeLinecap="round"
 												strokeLinejoin="round"
@@ -322,14 +504,12 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 									),
 								},
 								{
-									title: 'Szybki dojazd',
+									title: `Szybki dojazd do ${getGenitive(city.name)}`,
+									description: distanceText
+										? `Dojedziemy do ${getGenitive(city.name)} (${distanceText}) szybko i sprawnie. Przy awariach czas reakcji to ${city.distanceKm && city.distanceKm <= 30 ? '1-2 godziny' : '2-3 godziny'}.`
+										: `Dojedziemy do ${getGenitive(city.name)} szybko i sprawnie. Dojazd jest wliczony w cenę usługi.`,
 									icon: (
-										<svg
-											className="w-7 h-7 text-amber-700"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											aria-hidden="true">
+										<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 											<path
 												strokeLinecap="round"
 												strokeLinejoin="round"
@@ -340,14 +520,11 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 									),
 								},
 								{
-									title: 'Uczciwe ceny',
+									title: 'Uczciwe ceny i wycena gratis',
+									description:
+										'Bezpłatna wycena przed rozpoczęciem prac. Faktura VAT, brak ukrytych kosztów. Szczegółowy kosztorys na życzenie.',
 									icon: (
-										<svg
-											className="w-7 h-7 text-amber-700"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											aria-hidden="true">
+										<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 											<path
 												strokeLinecap="round"
 												strokeLinejoin="round"
@@ -358,14 +535,10 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 									),
 								},
 								{
-									title: 'Awaryjne 24/7',
+									title: 'Pogotowie elektryczne 24/7',
+									description: `Awaria prądu w ${getLocative(city.name)}? Zwarcie, przepięcie, wybite korki — przyjedziemy o każdej porze, również w weekendy i święta.`,
 									icon: (
-										<svg
-											className="w-7 h-7 text-amber-700"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											aria-hidden="true">
+										<svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 											<path
 												strokeLinecap="round"
 												strokeLinejoin="round"
@@ -378,11 +551,14 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 							].map(item => (
 								<div
 									key={item.title}
-									className="flex flex-col items-center text-center bg-white rounded-xl p-6 shadow-sm">
-									<div className="w-14 h-14 bg-amber-50 border border-amber-200 rounded-2xl flex items-center justify-center mb-3">
+									className="flex gap-4 bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:border-amber-200 hover:shadow-md transition-all">
+									<div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-amber-700 shrink-0">
 										{item.icon}
 									</div>
-									<h3 className="font-bold text-sm">{item.title}</h3>
+									<div>
+										<h3 className="font-bold text-gray-900 mb-1">{item.title}</h3>
+										<p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
+									</div>
 								</div>
 							))}
 						</div>
@@ -393,7 +569,7 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 				<section className="py-16 sm:py-20 bg-gray-900 text-white text-center">
 					<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
 						<h2 className="text-2xl sm:text-3xl font-bold mb-4">
-							Potrzebujesz elektryka w <span className="text-amber-400">{city.name}</span>?
+							Potrzebujesz elektryka w <span className="text-amber-400">{getLocative(city.name)}</span>?
 						</h2>
 						<p className="text-gray-300 mb-8 text-lg">Skontaktuj się z nami — wycena gratis, dojazd w cenie!</p>
 						<div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -423,6 +599,41 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 								</svg>
 								{email}
 							</a>
+						</div>
+					</div>
+				</section>
+
+				{/* FAQ section */}
+				<section className="py-16 sm:py-20 bg-[#f3f2ef]">
+					<div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+						<h2 className="text-2xl sm:text-3xl font-bold text-center mb-4">
+							Najczęściej zadawane{' '}
+							<span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-700">
+								pytania
+							</span>
+						</h2>
+						<p className="text-gray-600 text-center mb-10">
+							Elektryk {city.name} — odpowiedzi na najważniejsze pytania
+						</p>
+						<div className="space-y-3">
+							{cityFaqs.map((faq, i) => (
+								<details key={i} className="group bg-white rounded-xl border border-gray-200 overflow-hidden">
+									<summary className="flex items-center justify-between gap-4 px-6 py-4 cursor-pointer font-semibold text-gray-900 hover:text-amber-700 transition-colors list-none [&::-webkit-details-marker]:hidden">
+										<span>{faq.question}</span>
+										<svg
+											className="w-5 h-5 text-amber-500 shrink-0 transition-transform group-open:rotate-180"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+											aria-hidden="true">
+											<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+										</svg>
+									</summary>
+									<div className="px-6 pb-4 text-gray-600 leading-relaxed border-t border-gray-100 pt-3">
+										{faq.answer}
+									</div>
+								</details>
+							))}
 						</div>
 					</div>
 				</section>

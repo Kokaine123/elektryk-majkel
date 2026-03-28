@@ -1,5 +1,38 @@
 import { getServices, SanityService } from '@/lib/queries'
 
+// Sub-services grouped by main category (synced with Google Business Profile)
+const serviceSubItems: Record<string, string[]> = {
+	'Instalacje elektryczne': [
+		'Montaż instalacji elektrycznej',
+		'Montaż gniazdek i przełączników',
+		'Montaż przewodu uziemiającego',
+		'Montaż części elektrycznych',
+		'Zmiana okablowania',
+	],
+	'Naprawy awaryjne 24/7': [
+		'Naprawa instalacji elektrycznej',
+		'Naprawa gniazdek i włączników',
+		'Naprawa paneli elektrycznych',
+		'Naprawa urządzeń elektrycznych',
+		'Przywracanie zasilania',
+	],
+	'Modernizacja instalacji': [
+		'Wymiana panelu elektrycznego',
+		'Wymiana bezpieczników',
+		'Wymiana opornika cieplnego',
+		'Przenoszenie gniazdek',
+		'Przeglądy instalacji',
+	],
+	'Pomiary elektryczne': [
+		'Pomiary ochronne',
+		'Rezystancja izolacji',
+		'Impedancja pętli zwarcia',
+		'Protokoły i certyfikaty',
+	],
+	'Oświetlenie LED': ['Instalacja oświetlenia', 'Oświetlenie zewnętrzne', 'Naprawa oświetlenia', 'Montaż wentylatorów'],
+	'Smart Home': ['Instalacja alarmu', 'System zabezpieczeń', 'Ładowarka EV', 'Bramy automatyczne'],
+}
+
 const defaultServices = [
 	{
 		icon: 'home',
@@ -166,7 +199,18 @@ export default async function Services() {
 							<h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-amber-600 transition-colors">
 								{service.title}
 							</h3>
-							<p className="text-gray-600 leading-relaxed">{service.description}</p>
+							<p className="text-gray-600 leading-relaxed mb-4">{service.description}</p>
+							{serviceSubItems[service.title] && (
+								<div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
+									{serviceSubItems[service.title].map(sub => (
+										<span
+											key={sub}
+											className="text-xs bg-amber-50 text-amber-700 border border-amber-200/60 px-2.5 py-1 rounded-full">
+											{sub}
+										</span>
+									))}
+								</div>
+							)}
 						</div>
 					))}
 				</div>

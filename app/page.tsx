@@ -64,21 +64,50 @@ function buildJsonLd(seo: Awaited<ReturnType<typeof getSeoSettings>>) {
 					},
 				]
 
-	// Services catalog
+	// Full services catalog (synced with Google Business Profile)
+	const gbpServices = [
+		'Instalacje elektryczne',
+		'Montaż instalacji elektrycznej',
+		'Montaż gniazdek elektrycznych i przełączników',
+		'Montaż przewodu uziemiającego',
+		'Montaż części elektrycznych',
+		'Zmiana okablowania',
+		'Naprawy awaryjne 24/7',
+		'Naprawa instalacji elektrycznej',
+		'Naprawa gniazdek elektrycznych i włączników',
+		'Naprawa paneli elektrycznych',
+		'Naprawa urządzeń elektrycznych',
+		'Przywracanie zasilania elektrycznego',
+		'Modernizacja instalacji',
+		'Wymiana lub modernizacja panelu elektrycznego',
+		'Wymiana bezpieczników elektrycznych',
+		'Wymiana elektrycznego opornika cieplnego',
+		'Przenoszenie gniazdek elektrycznych i włączników',
+		'Przeglądy instalacji elektrycznej',
+		'Pomiary elektryczne',
+		'Oświetlenie LED',
+		'Instalacja oświetlenia',
+		'Instalacja oświetlenia zewnętrznego',
+		'Naprawa oświetlenia',
+		'Montaż wentylatora',
+		'Naprawa wentylatorów',
+		'Smart Home',
+		'Instalacja alarmu ogólnego',
+		'Instalacja systemu zabezpieczeń',
+		'Montaż ładowarki do samochodów elektrycznych',
+		'Bramy automatyczne',
+	]
+
 	const serviceItems =
 		seo?.servicesList?.length && seo.servicesList.length > 0
 			? seo.servicesList.map(s => ({
 					'@type': 'Offer',
 					itemOffered: { '@type': 'Service', name: s },
 				}))
-			: [
-					{ '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Instalacje elektryczne' } },
-					{ '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Naprawy awaryjne 24/7' } },
-					{ '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Modernizacja instalacji' } },
-					{ '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Pomiary elektryczne' } },
-					{ '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Oświetlenie LED' } },
-					{ '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Smart Home' } },
-				]
+			: gbpServices.map(s => ({
+					'@type': 'Offer',
+					itemOffered: { '@type': 'Service', name: s },
+				}))
 
 	return {
 		'@context': 'https://schema.org',

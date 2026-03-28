@@ -94,6 +94,24 @@ const defaultMeta = {
 		'instalacja wallbox',
 		'ładowarka samochodu elektrycznego',
 
+		// Bramy / alarmy / zabezpieczenia
+		'bramy automatyczne',
+		'montaż bramy automatycznej',
+		'instalacja alarmu',
+		'system zabezpieczeń',
+		'montaż alarmu domowego',
+
+		// Naprawy szczegółowe (GBP)
+		'naprawa paneli elektrycznych',
+		'naprawa urządzeń elektrycznych',
+		'naprawa wentylatorów',
+		'naprawa oświetlenia',
+		'przywracanie zasilania elektrycznego',
+		'wymiana opornika cieplnego',
+		'przenoszenie gniazdek elektrycznych',
+		'montaż wentylatora',
+		'montaż przewodu uziemiającego',
+
 		// Branżowe / long-tail
 		'elektryk do domu',
 		'elektryk cennik',
