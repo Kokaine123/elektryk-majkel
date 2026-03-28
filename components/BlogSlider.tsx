@@ -93,7 +93,7 @@ export default function BlogSlider({ posts, imageUrls }: { posts: BlogPost[]; im
 							)}
 							{/* Category badge */}
 							<div className="absolute top-4 left-4">
-								<span className="text-xs bg-amber-500 text-white px-3 py-1 rounded-full font-semibold shadow-sm">
+								<span className="text-xs bg-amber-700 text-white px-3 py-1 rounded-full font-semibold shadow-sm">
 									{categoryLabels[post.category] || post.category}
 								</span>
 							</div>
@@ -101,7 +101,7 @@ export default function BlogSlider({ posts, imageUrls }: { posts: BlogPost[]; im
 
 						{/* Content */}
 						<div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
-							<time className="text-sm text-gray-400 mb-3" dateTime={post.publishedAt}>
+							<time className="text-sm text-gray-600 mb-3" dateTime={post.publishedAt}>
 								{new Date(post.publishedAt).toLocaleDateString('pl-PL', {
 									year: 'numeric',
 									month: 'long',
@@ -112,7 +112,7 @@ export default function BlogSlider({ posts, imageUrls }: { posts: BlogPost[]; im
 							<p className="text-gray-600 leading-relaxed mb-6 line-clamp-3">{post.excerpt}</p>
 							<Link
 								href={`/blog/${post.slug.current}`}
-								className="inline-flex items-center gap-2 text-amber-600 hover:text-amber-700 font-semibold transition-colors group w-fit">
+								className="inline-flex items-center gap-2 text-amber-700 hover:text-amber-800 font-semibold transition-colors group w-fit">
 								Czytaj więcej
 								<svg
 									className="w-4 h-4 group-hover:translate-x-1 transition-transform"

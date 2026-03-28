@@ -27,7 +27,7 @@ export default function ServiceCard({
 					className={`absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-200 cursor-pointer ${
 						open
 							? 'bg-amber-500 text-white shadow-md'
-							: 'bg-gray-100 text-gray-400 hover:bg-amber-100 hover:text-amber-600 animate-pulse'
+							: 'bg-gray-200 text-gray-500 hover:bg-amber-100 hover:text-amber-600 animate-pulse'
 					}`}>
 					<svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
 						<path
