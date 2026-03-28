@@ -1,7 +1,12 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import { notFound } from 'next/navigation'
-import { getCityBySlug, getAllCitySlugs, getServices, getContactInfo, getSeoSettings } from '@/lib/queries'
+import { getCityBySlug, getAllCitySlugs, getServices, getContactInfo, getSeoSettings, getBlogPosts } from '@/lib/queries'
+import { urlFor } from '@/lib/sanity'
+import ServiceCard from '@/components/ServiceCard'
+
+const BlogSlider = dynamic(() => import('@/components/BlogSlider'))
 
 // Sub-services grouped by main category (synced with GBP)
 const serviceSubItems: Record<string, string[]> = {
@@ -82,6 +87,54 @@ function getGenitive(name: string): string {
 	return cityGenitive[name] || name
 }
 
+// Icon helper for service cards
+function ServiceIcon({ icon }: { icon?: string }) {
+	switch (icon) {
+		case 'home':
+			return (
+				<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+				</svg>
+			)
+		case 'alert':
+			return (
+				<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" />
+				</svg>
+			)
+		case 'bolt':
+			return (
+				<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+				</svg>
+			)
+		case 'beaker':
+			return (
+				<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+				</svg>
+			)
+		case 'lightbulb':
+			return (
+				<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-4.5 0m3.75 2.383a14.406 14.406 0 01-3 0M14.25 18v-.192c0-.983.658-1.823 1.508-2.316a7.5 7.5 0 10-7.517 0c.85.493 1.509 1.333 1.509 2.316V18" />
+				</svg>
+			)
+		case 'house':
+			return (
+				<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+				</svg>
+			)
+		default:
+			return (
+				<svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+					<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
+				</svg>
+			)
+	}
+}
+
 // ─── Static generation for all cities ────────────────────
 export async function generateStaticParams() {
 	const slugs = await getAllCitySlugs()
@@ -144,14 +197,23 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 export default async function CityPage({ params }: { params: Promise<{ miasto: string }> }) {
 	const { miasto } = await params
 	const slug = miasto.replace(/^elektryk-/, '')
-	const [city, services, contactInfo, seoSettings] = await Promise.all([
+	const [city, services, contactInfo, seoSettings, blogPosts] = await Promise.all([
 		getCityBySlug(slug).catch(() => null),
 		getServices().catch(() => []),
 		getContactInfo().catch(() => null),
 		getSeoSettings().catch(() => null),
+		getBlogPosts().catch(() => []),
 	])
 
 	if (!city) notFound()
+
+	// Pre-build blog image URLs server-side
+	const blogImageUrls: Record<string, string> = {}
+	for (const post of blogPosts) {
+		if (post.coverImage?.asset) {
+			blogImageUrls[post._id] = urlFor(post.coverImage).width(800).height(500).url()
+		}
+	}
 
 	const phone = contactInfo?.phone || '+48 537 751 820'
 	const email = contactInfo?.email || 'elektryk.majkel@gmail.com'
@@ -437,38 +499,13 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 						</p>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 							{services.map(service => (
-								<div
+								<ServiceCard
 									key={service._id}
-									className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:shadow-md hover:border-amber-200 transition-all">
-									<div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center mb-4">
-										<svg
-											className="w-6 h-6 text-amber-700"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-											aria-hidden="true">
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={1.5}
-												d="M13 10V3L4 14h7v7l9-11h-7z"
-											/>
-										</svg>
-									</div>
-									<h3 className="font-bold text-lg mb-2">{service.title}</h3>
-									<p className="text-gray-600 text-sm leading-relaxed mb-3">{service.description}</p>
-									{serviceSubItems[service.title] && (
-										<div className="flex flex-wrap gap-1.5 pt-3 border-t border-gray-100">
-											{serviceSubItems[service.title].map(sub => (
-												<span
-													key={sub}
-													className="text-xs bg-amber-50 text-amber-700 border border-amber-200/60 px-2 py-0.5 rounded-full">
-													{sub}
-												</span>
-											))}
-										</div>
-									)}
-								</div>
+									icon={<ServiceIcon icon={service.icon || undefined} />}
+									title={service.title}
+									description={service.description}
+									subItems={serviceSubItems[service.title]}
+								/>
 							))}
 						</div>
 					</div>
@@ -602,6 +639,9 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 						</div>
 					</div>
 				</section>
+
+				{/* Blog slider */}
+				{blogPosts.length > 0 && <BlogSlider posts={blogPosts} imageUrls={blogImageUrls} />}
 
 				{/* FAQ section */}
 				<section className="py-16 sm:py-20 bg-[#f3f2ef]">
