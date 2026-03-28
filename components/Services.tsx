@@ -1,4 +1,5 @@
 import { getServices, SanityService } from '@/lib/queries'
+import ServiceCard from './ServiceCard'
 
 // Sub-services grouped by main category (synced with Google Business Profile)
 const serviceSubItems: Record<string, string[]> = {
@@ -190,28 +191,13 @@ export default async function Services() {
 				{/* Services grid */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 					{services.map(service => (
-						<div
+						<ServiceCard
 							key={service.title}
-							className="group bg-[#faf9f6] border border-gray-200/80 rounded-2xl p-8 hover:border-amber-500/50 transition-all duration-300 hover:bg-amber-50/30 hover:shadow-lg hover:shadow-amber-500/5">
-							<div className="w-14 h-14 bg-amber-500/10 rounded-xl flex items-center justify-center text-amber-500 mb-6 group-hover:bg-amber-500/20 transition-colors">
-								<ServiceIcon icon={service.icon} />
-							</div>
-							<h3 className="text-xl font-bold mb-3 text-gray-900 group-hover:text-amber-600 transition-colors">
-								{service.title}
-							</h3>
-							<p className="text-gray-600 leading-relaxed mb-4">{service.description}</p>
-							{serviceSubItems[service.title] && (
-								<div className="flex flex-wrap gap-2 pt-2 border-t border-gray-100">
-									{serviceSubItems[service.title].map(sub => (
-										<span
-											key={sub}
-											className="text-xs bg-amber-50 text-amber-700 border border-amber-200/60 px-2.5 py-1 rounded-full">
-											{sub}
-										</span>
-									))}
-								</div>
-							)}
-						</div>
+							icon={<ServiceIcon icon={service.icon} />}
+							title={service.title}
+							description={service.description}
+							subItems={serviceSubItems[service.title]}
+						/>
 					))}
 				</div>
 			</div>

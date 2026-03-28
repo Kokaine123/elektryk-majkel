@@ -38,3 +38,22 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Utility scripts (one-time seeds/uploads)
+scripts/seed-blog.ts
+scripts/seed-blog-skrzynki.ts
+scripts/check-nav.ts
+scripts/swap-images.ts
+scripts/upload-brama.ts
+scripts/upload-brama-blog.ts
+scripts/upload-brama-extra.ts
+
+# Local images (already in Sanity CDN)
+public/img/brama.jpg
+public/img/bramaBlog.jpg
+public/img/exterior-modern-residential-building.jpg
+public/img/japanese-house-entrance-with-fence.jpg
+public/img/skrzynka elektryczna.jpg
+public/img/skrzynka elektryczna 2.jpg
+public/img/skrzynka3.jpg
+public/img/skrzynka4.jpg

@@ -11,6 +11,7 @@ const MapWrapper = dynamic(() => import('@/components/MapWrapper'))
 const Reviews = dynamic(() => import('@/components/Reviews'))
 const FAQ = dynamic(() => import('@/components/FAQ'))
 const Footer = dynamic(() => import('@/components/Footer'))
+const BlogSlider = dynamic(() => import('@/components/BlogSlider'))
 
 import {
 	getContactInfo,
@@ -20,6 +21,7 @@ import {
 	getFaqItems,
 	getSiteSettings,
 	getHeroSection,
+	getBlogPosts,
 } from '@/lib/queries'
 import { urlFor } from '@/lib/sanity'
 
@@ -155,15 +157,25 @@ function buildJsonLd(seo: Awaited<ReturnType<typeof getSeoSettings>>) {
 
 export default async function Home() {
 	// Fetch data for client components in parallel
-	const [contactInfo, reviews, mapCities, seoSettings, faqItems, siteSettings, heroSection] = await Promise.all([
-		getContactInfo().catch(() => null),
-		getReviews().catch(() => []),
-		getMapCities().catch(() => []),
-		getSeoSettings().catch(() => null),
-		getFaqItems().catch(() => []),
-		getSiteSettings().catch(() => null),
-		getHeroSection().catch(() => null),
-	])
+	const [contactInfo, reviews, mapCities, seoSettings, faqItems, siteSettings, heroSection, blogPosts] =
+		await Promise.all([
+			getContactInfo().catch(() => null),
+			getReviews().catch(() => []),
+			getMapCities().catch(() => []),
+			getSeoSettings().catch(() => null),
+			getFaqItems().catch(() => []),
+			getSiteSettings().catch(() => null),
+			getHeroSection().catch(() => null),
+			getBlogPosts().catch(() => []),
+		])
+
+	// Pre-build blog image URLs (server-side, since urlFor needs sanity config)
+	const blogImageUrls: Record<string, string> = {}
+	for (const post of blogPosts) {
+		if (post.coverImage?.asset) {
+			blogImageUrls[post._id] = urlFor(post.coverImage).width(800).height(500).url()
+		}
+	}
 
 	// Section visibility (default: show all)
 	const show = {
@@ -244,7 +256,7 @@ export default async function Home() {
 			)}
 			<a
 				href="#main-content"
-				className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-amber-500 focus:text-gray-950 focus:px-4 focus:py-2 focus:rounded-lg focus:font-semibold">
+				className="sr-only focus-visible:not-sr-only focus-visible:absolute focus-visible:top-4 focus-visible:left-4 focus-visible:z-[100] focus-visible:bg-amber-500 focus-visible:text-gray-950 focus-visible:px-4 focus-visible:py-2 focus-visible:rounded-lg focus-visible:font-semibold">
 				Przejdź do treści
 			</a>
 			<Navbar phone={phone || undefined} navItems={navItems} />
@@ -253,6 +265,7 @@ export default async function Home() {
 				{show.services && <Services />}
 				{show.about && <About />}
 				{show.projects && <Projects />}
+				{blogPosts.length > 0 && <BlogSlider posts={blogPosts} imageUrls={blogImageUrls} />}
 				{show.contact && <Contact contactInfo={contactInfo || undefined} />}
 				{show.map && <MapWrapper cities={mapCities.length > 0 ? mapCities : undefined} />}
 				{show.reviews && <Reviews initialReviews={reviews.length > 0 ? reviews : undefined} />}

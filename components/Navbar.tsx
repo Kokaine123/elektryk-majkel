@@ -18,6 +18,7 @@ export default function Navbar({ phone, navItems }: { phone?: string; navItems?:
 		{ href: '#o-nas', label: 'O nas' },
 		{ href: '#realizacje', label: 'Realizacje' },
 		{ href: '#kontakt', label: 'Kontakt' },
+		{ href: '/blog', label: 'Blog' },
 	]
 
 	const links = navItems && navItems.length > 0 ? navItems : defaultLinks
@@ -66,6 +67,8 @@ export default function Navbar({ phone, navItems }: { phone?: string; navItems?:
 
 	// Smooth scroll to section
 	const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+		// Let full paths navigate normally
+		if (!href.startsWith('#')) return
 		e.preventDefault()
 		const id = href.replace('#', '')
 		const el = document.getElementById(id)

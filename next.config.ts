@@ -6,6 +6,7 @@ const withBundleAnalyzer = bundleAnalyzer({
 })
 
 const nextConfig: NextConfig = {
+	turbopack: {},
 	devIndicators: false,
 	experimental: {
 		optimizePackageImports: [

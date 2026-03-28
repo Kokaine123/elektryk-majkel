@@ -56,6 +56,10 @@ export default defineConfig({
 							.schemaType('faqItem')
 							.child(S.documentTypeList('faqItem').title('Najczęściej zadawane pytania')),
 						S.listItem()
+							.title('Blog')
+							.schemaType('blogPost')
+							.child(S.documentTypeList('blogPost').title('Wpisy blogowe')),
+						S.listItem()
 							.title('Strony prawne')
 							.schemaType('legalPage')
 							.child(S.documentTypeList('legalPage').title('Polityka prywatności / Regulamin')),

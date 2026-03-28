@@ -343,3 +343,60 @@ const siteSettingsQuery = groq`
 export async function getSiteSettings(): Promise<SanitySiteSettings | null> {
 	return sanityFetch(siteSettingsQuery, {}, ['siteSettings'])
 }
+
+// ─── Blog Posts ──────────────────────────────────────────
+export interface SanityBlogPost {
+	_id: string
+	title: string
+	slug: { current: string }
+	excerpt: string
+	coverImage?: {
+		asset: { _ref: string }
+		alt?: string
+		hotspot?: { x: number; y: number }
+	}
+	content?: any[]
+	publishedAt: string
+	category: string
+	metaTitle?: string
+	metaDescription?: string
+}
+
+const blogPostsQuery = groq`
+	*[_type == "blogPost"] | order(publishedAt desc) {
+		_id, title, slug, excerpt, coverImage, publishedAt, category
+	}
+`
+
+export async function getBlogPosts(): Promise<SanityBlogPost[]> {
+	return sanityFetch(blogPostsQuery, {}, ['blogPost'])
+}
+
+const blogPostBySlugQuery = groq`
+	*[_type == "blogPost" && slug.current == $slug][0] {
+		_id, title, slug, excerpt, coverImage, content, publishedAt, category,
+		metaTitle, metaDescription
+	}
+`
+
+export async function getBlogPostBySlug(slug: string): Promise<SanityBlogPost | null> {
+	return sanityFetch(blogPostBySlugQuery, { slug }, ['blogPost'])
+}
+
+const relatedBlogPostsQuery = groq`
+	*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc)[0...3] {
+		_id, title, slug, excerpt, coverImage, publishedAt, category
+	}
+`
+
+export async function getRelatedBlogPosts(slug: string, category: string): Promise<SanityBlogPost[]> {
+	return sanityFetch(relatedBlogPostsQuery, { slug, category }, ['blogPost'])
+}
+
+const blogSlugsQuery = groq`
+	*[_type == "blogPost" && defined(slug.current)].slug.current
+`
+
+export async function getAllBlogSlugs(): Promise<string[]> {
+	return sanityFetch(blogSlugsQuery, {}, ['blogPost'])
+}
