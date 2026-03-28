@@ -26,9 +26,26 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 		city.metaDescription ||
 		`Profesjonalne usługi elektryczne w mieście ${city.name}. Instalacje, naprawy, modernizacje. Certyfikowany elektryk SEP. Dojazd z Radomyśla nad Sanem.`
 
+	const keywords = [
+		`elektryk ${city.name}`,
+		`usługi elektryczne ${city.name}`,
+		`instalacje elektryczne ${city.name}`,
+		`elektryk awaryjny ${city.name}`,
+		`naprawa instalacji ${city.name}`,
+		`pomiary elektryczne ${city.name}`,
+		`modernizacja instalacji ${city.name}`,
+		`elektryk z dojazdem ${city.name}`,
+		`podłączenie AGD ${city.name}`,
+		`oświetlenie LED ${city.name}`,
+		'elektryk Radomyśl nad Sanem',
+		'certyfikowany elektryk SEP',
+		'usługi elektryczne podkarpackie',
+	]
+
 	return {
 		title,
 		description,
+		keywords,
 		alternates: {
 			canonical: `https://elektrykmajkel.pl/uslugi/elektryk-${slug}`,
 		},
@@ -91,6 +108,44 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 			'@type': 'City',
 			name: city.name,
 		},
+		openingHoursSpecification: seoSettings?.openingHours?.length
+			? seoSettings.openingHours.map((h: { days?: string[]; opens?: string; closes?: string }) => ({
+					'@type': 'OpeningHoursSpecification',
+					dayOfWeek: h.days || [],
+					opens: h.opens || '07:00',
+					closes: h.closes || '18:00',
+				}))
+			: [
+					{
+						'@type': 'OpeningHoursSpecification',
+						dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+						opens: '07:00',
+						closes: '18:00',
+					},
+					{
+						'@type': 'OpeningHoursSpecification',
+						dayOfWeek: 'Saturday',
+						opens: '08:00',
+						closes: '14:00',
+					},
+				],
+		hasOfferCatalog:
+			services.length > 0
+				? {
+						'@type': 'OfferCatalog',
+						name: `Usługi elektryczne - ${city.name}`,
+						itemListElement: services.map(s => ({
+							'@type': 'Offer',
+							itemOffered: {
+								'@type': 'Service',
+								name: s.title,
+								description: s.description,
+								areaServed: { '@type': 'City', name: city.name },
+								provider: { '@type': 'Electrician', name: businessName },
+							},
+						})),
+					}
+				: undefined,
 		parentOrganization: {
 			'@type': 'Electrician',
 			name: businessName,
@@ -98,9 +153,36 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 		},
 	}
 
+	// BreadcrumbList JSON-LD
+	const breadcrumbJsonLd = {
+		'@context': 'https://schema.org',
+		'@type': 'BreadcrumbList',
+		itemListElement: [
+			{
+				'@type': 'ListItem',
+				position: 1,
+				name: 'Strona główna',
+				item: 'https://elektrykmajkel.pl',
+			},
+			{
+				'@type': 'ListItem',
+				position: 2,
+				name: 'Usługi',
+				item: 'https://elektrykmajkel.pl/#uslugi',
+			},
+			{
+				'@type': 'ListItem',
+				position: 3,
+				name: city.name,
+				item: `https://elektrykmajkel.pl/uslugi/elektryk-${slug}`,
+			},
+		],
+	}
+
 	return (
 		<>
 			<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+			<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }} />
 
 			{/* Navigation bar */}
 			<nav className="bg-gray-950 text-white" aria-label="Nawigacja powrót">

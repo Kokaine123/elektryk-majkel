@@ -46,7 +46,7 @@ export default function Hero({ data }: HeroProps) {
 			{/* Glowing orb */}
 			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-3xl" />
 
-			<div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20">
+			<div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20 pb-12 sm:pb-0">
 				{/* Badge */}
 				{badgeText && (
 					<div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-1.5 mb-8">
@@ -107,9 +107,9 @@ export default function Hero({ data }: HeroProps) {
 
 				{/* Stats */}
 				{stats && stats.length > 0 && (
-					<div className="flex flex-wrap justify-center gap-6 max-w-3xl mx-auto">
+					<div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
 						{stats.map(stat => (
-							<div key={stat.label} className="text-center min-w-[140px]">
+							<div key={stat.label} className="text-center">
 								<div className="text-3xl md:text-4xl font-extrabold text-amber-500">{stat.value}</div>
 								<div className="text-sm text-gray-600 mt-1">{stat.label}</div>
 							</div>
@@ -118,7 +118,7 @@ export default function Hero({ data }: HeroProps) {
 				)}
 			</div>
 
-			{/* Scroll indicator */}
+			{/* Scroll indicator — hidden on mobile where content fills the screen */}
 			<button
 				onClick={() => {
 					const hero = document.getElementById('start')
@@ -128,7 +128,7 @@ export default function Hero({ data }: HeroProps) {
 					}
 				}}
 				aria-label="Przewiń do następnej sekcji"
-				className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer hover:text-amber-500 transition-colors">
+				className="hidden sm:block absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer hover:text-amber-500 transition-colors">
 				<svg
 					className="w-6 h-6 text-gray-500 hover:text-amber-500 transition-colors"
 					fill="none"

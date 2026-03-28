@@ -17,9 +17,13 @@ function createFaviconSvg(size: number): Buffer {
 }
 
 async function main() {
-	// Generate square icon from SVG
+	// Generate square icon from SVG at high resolution
 	const squareBuffer = await sharp(createFaviconSvg(512)).png().toBuffer()
-	console.log('Created app/favicon.ico (32x32)')
+
+	// 1. favicon.ico (48x48 — Google requires minimum 48x48)
+	const ico48 = await sharp(squareBuffer).resize(48, 48).png().toBuffer()
+	fs.writeFileSync(path.join(APP, 'favicon.ico'), createIco(ico48, 48, 48))
+	console.log('Created app/favicon.ico (48x48)')
 
 	// 2. icon.png for app directory (192x192)
 	await sharp(squareBuffer).resize(192, 192).png().toFile(path.join(APP, 'icon.png'))

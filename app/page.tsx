@@ -153,6 +153,40 @@ export default async function Home() {
 	const phone = contactInfo?.phone
 	const jsonLd = buildJsonLd(seoSettings)
 
+	// AggregateRating + Review JSON-LD
+	const reviewsForSchema = reviews.length > 0 ? reviews : null
+	const reviewJsonLd = reviewsForSchema
+		? {
+				'@context': 'https://schema.org',
+				'@type': 'LocalBusiness',
+				name: seoSettings?.businessName || 'Elektryk Majkel',
+				url: seoSettings?.businessUrl || 'https://elektrykmajkel.pl',
+				aggregateRating: {
+					'@type': 'AggregateRating',
+					ratingValue: (reviewsForSchema.reduce((sum, r) => sum + r.rating, 0) / reviewsForSchema.length).toFixed(1),
+					bestRating: '5',
+					worstRating: '1',
+					ratingCount: reviewsForSchema.length,
+					reviewCount: reviewsForSchema.length,
+				},
+				review: reviewsForSchema.map(r => ({
+					'@type': 'Review',
+					author: {
+						'@type': 'Person',
+						name: r.author,
+					},
+					reviewRating: {
+						'@type': 'Rating',
+						ratingValue: r.rating,
+						bestRating: '5',
+						worstRating: '1',
+					},
+					reviewBody: r.text,
+					...(r.date && { datePublished: r.date }),
+				})),
+			}
+		: null
+
 	// FAQPage JSON-LD
 	const faqsForSchema = faqItems.length > 0 ? faqItems : null
 	const faqJsonLd = faqsForSchema
@@ -173,6 +207,9 @@ export default async function Home() {
 	return (
 		<>
 			<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+			{reviewJsonLd && (
+				<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewJsonLd) }} />
+			)}
 			{faqJsonLd && (
 				<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
 			)}
