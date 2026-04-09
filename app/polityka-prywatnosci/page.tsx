@@ -12,6 +12,9 @@ export async function generateMetadata(): Promise<Metadata> {
 		description:
 			page?.metaDescription ||
 			'Polityka prywatności serwisu elektrykmajkel.pl. Informacje o przetwarzaniu danych osobowych zgodnie z RODO.',
+		alternates: {
+			canonical: 'https://elektrykmajkel.pl/polityka-prywatnosci',
+		},
 		robots: { index: true, follow: true },
 	}
 }

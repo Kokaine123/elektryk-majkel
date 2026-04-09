@@ -10,6 +10,9 @@ export async function generateMetadata(): Promise<Metadata> {
 	return {
 		title: page?.metaTitle || 'Regulamin | Elektryk Majkel',
 		description: page?.metaDescription || 'Regulamin korzystania z serwisu internetowego elektrykmajkel.pl.',
+		alternates: {
+			canonical: 'https://elektrykmajkel.pl/regulamin',
+		},
 		robots: { index: true, follow: true },
 	}
 }
