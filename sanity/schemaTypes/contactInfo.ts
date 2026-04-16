@@ -26,13 +26,13 @@ export const contactInfo = defineType({
 			name: 'workingHoursWeekday',
 			title: 'Godziny pracy (Pon-Pt)',
 			type: 'string',
-			initialValue: 'Pon - Pt: 7:00 - 18:00',
+			initialValue: 'Pon - Sob: Całodobowo',
 		}),
 		defineField({
 			name: 'workingHoursSaturday',
 			title: 'Godziny pracy (Sobota)',
 			type: 'string',
-			initialValue: 'Sob: 8:00 - 14:00',
+			initialValue: 'Niedziela: nieczynne',
 		}),
 		defineField({
 			name: 'emergencyNote',

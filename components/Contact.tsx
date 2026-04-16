@@ -17,10 +17,10 @@ const defaults: Required<ContactInfoProps> = {
 	phone: '+48 537 751 820',
 	email: 'elektryk.majkel@gmail.com',
 	location: 'Radomyśl nad Sanem i okolice',
-	workingHoursWeekday: 'Pon - Pt: 7:00 - 18:00',
-	workingHoursSaturday: 'Sob: 8:00 - 14:00',
-	emergencyNote: 'Awarie: całodobowo',
-	emergencyAvailable: 'Dostępny 24/7 w nagłych wypadkach',
+	workingHoursWeekday: 'Pon - Sob: Całodobowo',
+	workingHoursSaturday: 'Niedziela: nieczynne',
+	emergencyNote: 'Dostępni całą dobę, 6 dni w tygodniu',
+	emergencyAvailable: 'Dostępny 24/7',
 	emailResponseTime: 'Odpowiadamy w ciągu 24h',
 }
 

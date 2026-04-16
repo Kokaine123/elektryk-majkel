@@ -18,8 +18,7 @@ const defaultFaqs: FaqItem[] = [
 	{
 		_id: '2',
 		question: 'Czy pracujecie w weekendy i święta?',
-		answer:
-			'Tak — w soboty pracujemy w godzinach 8:00-14:00. W nagłych awariach jesteśmy dostępni 24/7, również w niedziele i święta.',
+		answer: 'Tak — jesteśmy czynni całą dobę od poniedziałku do soboty. W niedziele nie pracujemy.',
 	},
 	{
 		_id: '3',

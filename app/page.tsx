@@ -48,21 +48,15 @@ function buildJsonLd(seo: Awaited<ReturnType<typeof getSeoSettings>>) {
 			? seo.openingHours.map(h => ({
 					'@type': 'OpeningHoursSpecification',
 					dayOfWeek: h.days || [],
-					opens: h.opens || '07:00',
-					closes: h.closes || '18:00',
+					opens: h.opens || '00:00',
+					closes: h.closes || '23:59',
 				}))
 			: [
 					{
 						'@type': 'OpeningHoursSpecification',
-						dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
-						opens: '07:00',
-						closes: '18:00',
-					},
-					{
-						'@type': 'OpeningHoursSpecification',
-						dayOfWeek: 'Saturday',
-						opens: '08:00',
-						closes: '14:00',
+						dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+						opens: '00:00',
+						closes: '23:59',
 					},
 				]
 

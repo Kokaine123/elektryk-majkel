@@ -6,7 +6,7 @@ export default async function Footer() {
 	let phone = '+48 537 751 820'
 	let email = 'elektryk.majkel@gmail.com'
 	let location = 'Radomyśl nad Sanem i okolice'
-	let hours = 'Pon-Pt: 7:00-18:00 | Sob: 8:00-14:00'
+	let hours = 'Pon-Sob: Całodobowo | Nd: nieczynne'
 
 	try {
 		const info = await getContactInfo()
@@ -14,7 +14,7 @@ export default async function Footer() {
 			phone = info.phone || phone
 			email = info.email || email
 			location = info.location || location
-			hours = `${info.workingHoursWeekday || 'Pon-Pt: 7:00-18:00'} | ${info.workingHoursSaturday || 'Sob: 8:00-14:00'}`
+			hours = `${info.workingHoursWeekday || 'Pon - Sob: Całodobowo'} | ${info.workingHoursSaturday || 'Niedziela: nieczynne'}`
 		}
 	} catch {
 		// fallback to defaults
