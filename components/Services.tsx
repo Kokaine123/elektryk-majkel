@@ -34,6 +34,16 @@ const serviceSubItems: Record<string, string[]> = {
 	'Smart Home': ['Instalacja alarmu', 'System zabezpieczeń', 'Ładowarka EV', 'Bramy automatyczne'],
 }
 
+// Slug mapping for service subpages
+const servicePageSlugs: Record<string, string> = {
+	'Instalacje elektryczne': 'instalacje-elektryczne',
+	'Naprawy awaryjne 24/7': 'naprawy-awaryjne-24-7',
+	'Modernizacja instalacji': 'modernizacja-instalacji',
+	'Pomiary elektryczne': 'pomiary-elektryczne',
+	'Oświetlenie LED': 'oswietlenie-led',
+	'Naprawa maszyn elektrycznych': 'naprawa-maszyn-elektrycznych',
+}
+
 const defaultServices = [
 	{
 		icon: 'home',
@@ -197,6 +207,7 @@ export default async function Services() {
 							title={service.title}
 							description={service.description}
 							subItems={serviceSubItems[service.title]}
+							href={servicePageSlugs[service.title] ? `/uslugi/${servicePageSlugs[service.title]}` : undefined}
 						/>
 					))}
 				</div>

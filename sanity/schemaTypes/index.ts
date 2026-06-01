@@ -10,6 +10,7 @@ import { legalPage } from './legalPage'
 import { siteSettings } from './siteSettings'
 import { heroSection } from './heroSection'
 import { blogPost } from './blogPost'
+import { servicePage } from './servicePage'
 
 export const schemaTypes = [
 	project,
@@ -24,4 +25,5 @@ export const schemaTypes = [
 	siteSettings,
 	heroSection,
 	blogPost,
+	servicePage,
 ]

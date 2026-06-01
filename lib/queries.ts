@@ -400,3 +400,81 @@ const blogSlugsQuery = groq`
 export async function getAllBlogSlugs(): Promise<string[]> {
 	return sanityFetch(blogSlugsQuery, {}, ['blogPost'])
 }
+
+// ─── Service Pages ───────────────────────────────────────
+export interface SanityServicePage {
+	_id: string
+	title: string
+	slug: { current: string }
+	metaTitle?: string
+	metaDescription?: string
+	heroImage?: {
+		asset: { _ref: string }
+		alt?: string
+		hotspot?: { x: number; y: number }
+	}
+	heroBadge?: string
+	intro: string
+	heroCtaSecondary?: string
+	benefitsLabel?: string
+	benefitsHeading?: string
+	benefits?: { title: string; description: string }[]
+	howWeWorkLabel?: string
+	howWeWorkHeading?: string
+	howWeWorkDescription?: string
+	howWeWork?: { title: string; description: string }[]
+	galleryHeading?: string
+	galleryImages?: {
+		asset: { _ref: string }
+		alt?: string
+		caption?: string
+		hotspot?: { x: number; y: number }
+	}[]
+	scopeLabel?: string
+	scopeHeading?: string
+	scopeItems?: string[]
+	ctaHeading?: string
+	ctaDescription?: string
+	faqHeading?: string
+	faqDescription?: string
+	faq?: { question: string; answer: string }[]
+	keywords?: string[]
+	order: number
+}
+
+const servicePageBySlugQuery = groq`
+	*[_type == "servicePage" && slug.current == $slug][0] {
+		_id, title, slug, metaTitle, metaDescription,
+		heroImage, heroBadge, intro, heroCtaSecondary,
+		benefitsLabel, benefitsHeading, benefits[]{ title, description },
+		howWeWorkLabel, howWeWorkHeading, howWeWorkDescription,
+		howWeWork[]{ title, description },
+		galleryHeading, galleryImages[]{ asset, alt, caption, hotspot },
+		scopeLabel, scopeHeading, scopeItems,
+		ctaHeading, ctaDescription,
+		faqHeading, faqDescription, faq[]{ question, answer },
+		keywords, order
+	}
+`
+
+export async function getServicePageBySlug(slug: string): Promise<SanityServicePage | null> {
+	return sanityFetch(servicePageBySlugQuery, { slug }, ['servicePage'])
+}
+
+const servicePageSlugsQuery = groq`
+	*[_type == "servicePage" && defined(slug.current)].slug.current
+`
+
+export async function getAllServicePageSlugs(): Promise<string[]> {
+	return sanityFetch(servicePageSlugsQuery, {}, ['servicePage'])
+}
+
+const allServicePagesQuery = groq`
+	*[_type == "servicePage"] | order(order asc) {
+		_id, title, slug, metaTitle, metaDescription, order
+	}
+`
+
+export async function getAllServicePages(): Promise<SanityServicePage[]> {
+	return sanityFetch(allServicePagesQuery, {}, ['servicePage'])
+}

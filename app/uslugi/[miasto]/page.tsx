@@ -9,9 +9,12 @@ import {
 	getContactInfo,
 	getSeoSettings,
 	getBlogPosts,
+	getServicePageBySlug,
+	getAllServicePageSlugs,
 } from '@/lib/queries'
 import { urlFor } from '@/lib/sanity'
 import ServiceCard from '@/components/ServiceCard'
+import ServicePageView from './ServicePageView'
 
 const BlogSlider = dynamic(() => import('@/components/BlogSlider'))
 
@@ -46,6 +49,16 @@ const serviceSubItems: Record<string, string[]> = {
 	],
 	'Oświetlenie LED': ['Instalacja oświetlenia', 'Oświetlenie zewnętrzne', 'Naprawa oświetlenia', 'Montaż wentylatorów'],
 	'Smart Home': ['Instalacja alarmu', 'System zabezpieczeń', 'Ładowarka EV', 'Bramy automatyczne'],
+}
+
+// Slug mapping for service subpages
+const servicePageSlugs: Record<string, string> = {
+	'Instalacje elektryczne': 'instalacje-elektryczne',
+	'Naprawy awaryjne 24/7': 'naprawy-awaryjne-24-7',
+	'Modernizacja instalacji': 'modernizacja-instalacji',
+	'Pomiary elektryczne': 'pomiary-elektryczne',
+	'Oświetlenie LED': 'oswietlenie-led',
+	'Naprawa maszyn elektrycznych': 'naprawa-maszyn-elektrycznych',
 }
 
 // Polish locative case (miejscownik) for city names — "w [mieście]"
@@ -167,17 +180,56 @@ function ServiceIcon({ icon }: { icon?: string }) {
 	}
 }
 
-// ─── Static generation for all cities ────────────────────
+// ─── Static generation for all cities + service pages ────
 export async function generateStaticParams() {
-	const slugs = await getAllCitySlugs()
-	return slugs.map(slug => ({
-		miasto: `elektryk-${slug}`,
-	}))
+	const [citySlugs, serviceSlugs] = await Promise.all([
+		getAllCitySlugs().catch(() => []),
+		getAllServicePageSlugs().catch(() => []),
+	])
+	return [
+		...citySlugs.map(slug => ({ miasto: `elektryk-${slug}` })),
+		...serviceSlugs.map(slug => ({ miasto: slug })),
+	]
 }
 
-// ─── Dynamic metadata per city ───────────────────────────
+// ─── Dynamic metadata per city or service page ──────────
 export async function generateMetadata({ params }: { params: Promise<{ miasto: string }> }): Promise<Metadata> {
 	const { miasto } = await params
+
+	// Service page (slug doesn't start with "elektryk-")
+	if (!miasto.startsWith('elektryk-')) {
+		const servicePage = await getServicePageBySlug(miasto).catch(() => null)
+		if (!servicePage) return { title: 'Nie znaleziono strony' }
+
+		const title = servicePage.metaTitle || `${servicePage.title} | Elektryk Majkel`
+		const description = servicePage.metaDescription || servicePage.intro.slice(0, 155)
+
+		return {
+			title,
+			description,
+			keywords: servicePage.keywords || [],
+			alternates: { canonical: `https://elektrykmajkel.pl/uslugi/${miasto}` },
+			openGraph: {
+				title,
+				description,
+				type: 'website',
+				locale: 'pl_PL',
+				url: `https://elektrykmajkel.pl/uslugi/${miasto}`,
+				siteName: 'Elektryk Majkel',
+				...(servicePage.heroImage?.asset && {
+					images: [{
+						url: urlFor(servicePage.heroImage).width(1200).height(630).url(),
+						width: 1200,
+						height: 630,
+						alt: servicePage.heroImage.alt || servicePage.title,
+					}],
+				}),
+			},
+			robots: { index: true, follow: true },
+		}
+	}
+
+	// City page
 	const slug = miasto.replace(/^elektryk-/, '')
 	const city = await getCityBySlug(slug)
 
@@ -228,6 +280,15 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 // ─── Page component ──────────────────────────────────────
 export default async function CityPage({ params }: { params: Promise<{ miasto: string }> }) {
 	const { miasto } = await params
+
+	// Service page route
+	if (!miasto.startsWith('elektryk-')) {
+		const servicePage = await getServicePageBySlug(miasto).catch(() => null)
+		if (!servicePage) notFound()
+		return <ServicePageView page={servicePage} />
+	}
+
+	// City page route
 	const slug = miasto.replace(/^elektryk-/, '')
 	const [city, services, contactInfo, seoSettings, blogPosts] = await Promise.all([
 		getCityBySlug(slug).catch(() => null),
@@ -531,6 +592,7 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 									title={service.title}
 									description={service.description}
 									subItems={serviceSubItems[service.title]}
+									href={servicePageSlugs[service.title] ? `/uslugi/${servicePageSlugs[service.title]}` : undefined}
 								/>
 							))}
 						</div>

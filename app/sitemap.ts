@@ -1,13 +1,14 @@
 import type { MetadataRoute } from 'next'
-import { getAllCitySlugs, getAllBlogSlugs } from '@/lib/queries'
+import { getAllCitySlugs, getAllBlogSlugs, getAllServicePageSlugs } from '@/lib/queries'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	const baseUrl = 'https://elektrykmajkel.pl'
 	const now = new Date()
 
-	const [citySlugs, blogSlugs] = await Promise.all([
+	const [citySlugs, blogSlugs, serviceSlugs] = await Promise.all([
 		getAllCitySlugs().catch(() => []),
 		getAllBlogSlugs().catch(() => []),
+		getAllServicePageSlugs().catch(() => []),
 	])
 
 	const cityPages = citySlugs.map(slug => ({
@@ -22,6 +23,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		lastModified: now,
 		changeFrequency: 'weekly' as const,
 		priority: 0.6,
+	}))
+
+	const servicePages = serviceSlugs.map(slug => ({
+		url: `${baseUrl}/uslugi/${slug}`,
+		lastModified: now,
+		changeFrequency: 'monthly' as const,
+		priority: 0.8,
 	}))
 
 	return [
@@ -49,6 +57,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 			changeFrequency: 'yearly',
 			priority: 0.3,
 		},
+		...servicePages,
 		...cityPages,
 		...blogPages,
 	]

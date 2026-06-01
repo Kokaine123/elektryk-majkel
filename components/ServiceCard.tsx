@@ -1,17 +1,20 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 
 export default function ServiceCard({
 	icon,
 	title,
 	description,
 	subItems,
+	href,
 }: {
 	icon: React.ReactNode
 	title: string
 	description: string
 	subItems?: string[]
+	href?: string
 }) {
 	const [open, setOpen] = useState(false)
 
@@ -65,6 +68,23 @@ export default function ServiceCard({
 						</div>
 					</div>
 				</div>
+			)}
+
+			{/* Link to service subpage */}
+			{href && (
+				<Link
+					href={href}
+					className="inline-flex items-center gap-1.5 text-sm font-semibold text-amber-600 hover:text-amber-700 transition-colors mt-4 group/link">
+					Dowiedz się więcej
+					<svg
+						className="w-4 h-4 transition-transform group-hover/link:translate-x-1"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+						aria-hidden="true">
+						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+					</svg>
+				</Link>
 			)}
 		</div>
 	)
