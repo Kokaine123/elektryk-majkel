@@ -11,6 +11,8 @@ export default function Navbar({ phone, navItems }: { phone?: string; navItems?:
 	const [activeSection, setActiveSection] = useState('#start')
 	const [scrolled, setScrolled] = useState(false)
 	const lastScrollY = useRef(0)
+	const frameRequested = useRef(false)
+	const sectionOffsets = useRef<{ href: string; top: number }[]>([])
 
 	const defaultLinks = [
 		{ href: '#start', label: 'Start' },
@@ -26,7 +28,19 @@ export default function Navbar({ phone, navItems }: { phone?: string; navItems?:
 	linksRef.current = links
 
 	useEffect(() => {
-		const onScroll = () => {
+		const recalculateOffsets = () => {
+			sectionOffsets.current = linksRef.current
+				.filter(link => link.href.startsWith('#'))
+				.map(link => {
+					const id = link.href.slice(1)
+					const el = document.getElementById(id)
+					return el ? { href: link.href, top: el.offsetTop } : null
+				})
+				.filter((item): item is { href: string; top: number } => item !== null)
+				.sort((a, b) => a.top - b.top)
+		}
+
+		const onScrollFrame = () => {
 			const currentScrollY = window.scrollY
 
 			// Hide/show on scroll direction
@@ -41,28 +55,39 @@ export default function Navbar({ phone, navItems }: { phone?: string; navItems?:
 			// Background on scroll
 			setScrolled(currentScrollY > 20)
 
-			// Active section detection — sort by actual DOM position
-			const currentLinks = linksRef.current
-			const sectionEls = currentLinks
-				.map(l => ({ id: l.href.replace('#', ''), el: document.getElementById(l.href.replace('#', '')) }))
-				.filter((s): s is { id: string; el: HTMLElement } => s.el !== null)
-				.sort((a, b) => a.el.getBoundingClientRect().top - b.el.getBoundingClientRect().top)
-
-			let found = false
-			for (let i = sectionEls.length - 1; i >= 0; i--) {
-				if (sectionEls[i].el.getBoundingClientRect().top <= 120) {
-					setActiveSection(`#${sectionEls[i].id}`)
-					found = true
-					break
+			// Active section detection using cached offsets to avoid layout thrashing.
+			const positions = sectionOffsets.current
+			if (positions.length > 0) {
+				const marker = currentScrollY + 120
+				let nextActive = positions[0].href
+				for (let i = positions.length - 1; i >= 0; i--) {
+					if (positions[i].top <= marker) {
+						nextActive = positions[i].href
+						break
+					}
 				}
+				setActiveSection(nextActive)
 			}
-			if (!found && sectionEls.length > 0) {
-				setActiveSection(`#${sectionEls[0].id}`)
-			}
+
+			frameRequested.current = false
 		}
 
+		const onScroll = () => {
+			if (frameRequested.current) return
+			frameRequested.current = true
+			window.requestAnimationFrame(onScrollFrame)
+		}
+
+		recalculateOffsets()
+		onScrollFrame()
 		window.addEventListener('scroll', onScroll, { passive: true })
-		return () => window.removeEventListener('scroll', onScroll)
+		window.addEventListener('resize', recalculateOffsets)
+		window.addEventListener('load', recalculateOffsets)
+		return () => {
+			window.removeEventListener('scroll', onScroll)
+			window.removeEventListener('resize', recalculateOffsets)
+			window.removeEventListener('load', recalculateOffsets)
+		}
 	}, [])
 
 	// Smooth scroll to section

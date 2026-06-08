@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { SanityHeroSection } from '@/lib/queries'
 
 interface HeroProps {
@@ -32,8 +33,19 @@ export default function Hero({ data }: HeroProps) {
 		<section
 			id="start"
 			aria-label="Strona główna"
-			className="relative min-h-screen flex items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed"
-			style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58), rgba(0,0,0,0.58)), url(/HeroCable.png)' }}>
+			className="relative min-h-screen flex items-center justify-center overflow-hidden">
+			<div className="absolute inset-0">
+				<Image
+					src="/HeroCable.png"
+					alt=""
+					fill
+					priority
+					quality={68}
+					sizes="100vw"
+					className="object-cover"
+				/>
+				<div className="absolute inset-0 bg-black/58" />
+			</div>
 			{/* Subtle glow layer for depth */}
 			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-amber-500/10 rounded-full blur-3xl" />
 

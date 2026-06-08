@@ -12,7 +12,7 @@ const inter = Inter({
 	subsets: ['latin', 'latin-ext'],
 	display: 'swap',
 	variable: '--font-inter',
-	preload: true,
+	preload: false,
 	adjustFontFallback: true,
 })
 

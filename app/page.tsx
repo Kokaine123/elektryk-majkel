@@ -4,6 +4,7 @@ import Hero from '@/components/Hero'
 import CtaBanner from '@/components/CtaBanner'
 import Services from '@/components/Services'
 import About from '@/components/About'
+import DeferredSection from '@/components/DeferredSection'
 
 // Lazy load below-the-fold components
 const Projects = dynamic(() => import('@/components/Projects'))
@@ -262,10 +263,26 @@ export default async function Home() {
 				{show.projects && <Projects />}
 				{show.contact && <Contact contactInfo={contactInfo || undefined} />}
 				<CtaBanner />
-				{blogPosts.length > 0 && <BlogSlider posts={blogPosts} imageUrls={blogImageUrls} />}
-				{show.map && <MapWrapper cities={mapCities.length > 0 ? mapCities : undefined} />}
-				{show.reviews && <Reviews initialReviews={reviews.length > 0 ? reviews : undefined} />}
-				{show.faq && <FAQ initialFaqs={faqItems.length > 0 ? faqItems : undefined} />}
+				{blogPosts.length > 0 && (
+					<DeferredSection minHeight={380}>
+						<BlogSlider posts={blogPosts} imageUrls={blogImageUrls} />
+					</DeferredSection>
+				)}
+				{show.map && (
+					<DeferredSection minHeight={420}>
+						<MapWrapper cities={mapCities.length > 0 ? mapCities : undefined} />
+					</DeferredSection>
+				)}
+				{show.reviews && (
+					<DeferredSection minHeight={380}>
+						<Reviews initialReviews={reviews.length > 0 ? reviews : undefined} />
+					</DeferredSection>
+				)}
+				{show.faq && (
+					<DeferredSection minHeight={300}>
+						<FAQ initialFaqs={faqItems.length > 0 ? faqItems : undefined} />
+					</DeferredSection>
+				)}
 			</main>
 			<Footer />
 		</>

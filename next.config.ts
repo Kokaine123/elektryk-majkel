@@ -5,21 +5,27 @@ const withBundleAnalyzer = bundleAnalyzer({
 	enabled: process.env.ANALYZE === 'true',
 })
 
-const contentSecurityPolicy = [
-	"default-src 'self'",
-	"base-uri 'self'",
-	"object-src 'none'",
-	"frame-ancestors 'none'",
-	"form-action 'self'",
-	"script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net",
-	"style-src 'self' 'unsafe-inline'",
-	"img-src 'self' data: blob: https://cdn.sanity.io https://www.googletagmanager.com https://www.facebook.com https://*.tile.openstreetmap.org https://unpkg.com",
-	"font-src 'self' data: https://fonts.gstatic.com",
-	"connect-src 'self' https://cdn.sanity.io https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://www.facebook.com",
-	"frame-src https://www.googletagmanager.com",
-	"worker-src 'self' blob:",
-	'upgrade-insecure-requests',
-].join('; ')
+function getContentSecurityPolicy(isDev: boolean) {
+	const scriptSrc = isDev
+		? "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://connect.facebook.net"
+		: "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net"
+
+	return [
+		"default-src 'self'",
+		"base-uri 'self'",
+		"object-src 'none'",
+		"frame-ancestors 'none'",
+		"form-action 'self'",
+		scriptSrc,
+		"style-src 'self' 'unsafe-inline'",
+		"img-src 'self' data: blob: https://cdn.sanity.io https://www.googletagmanager.com https://www.facebook.com https://*.tile.openstreetmap.org https://unpkg.com",
+		"font-src 'self' data: https://fonts.gstatic.com",
+		"connect-src 'self' https://cdn.sanity.io https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://www.facebook.com",
+		"frame-src https://www.googletagmanager.com",
+		"worker-src 'self' blob:",
+		'upgrade-insecure-requests',
+	].join('; ')
+}
 
 const nextConfig: NextConfig = {
 	turbopack: {},
@@ -65,6 +71,8 @@ const nextConfig: NextConfig = {
 		],
 	},
 	async headers() {
+		const isDev = process.env.NODE_ENV !== 'production'
+		const contentSecurityPolicy = getContentSecurityPolicy(isDev)
 		return [
 			{
 				source: '/((?!studio).*)',
