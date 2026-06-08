@@ -118,7 +118,7 @@ export default async function About() {
 			id="o-nas"
 			aria-label="O nas"
 			className="py-24 bg-gray-900 bg-cover bg-center bg-no-repeat bg-fixed"
-			style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/backgrounsSectionSep.png)' }}>
+			style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/backgrounsSectionSep.webp)' }}>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="grid lg:grid-cols-2 gap-16 items-center">
 					{/* Left: Text content */}

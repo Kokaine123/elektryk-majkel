@@ -36,7 +36,7 @@ export default function Hero({ data }: HeroProps) {
 			className="relative min-h-screen flex items-center justify-center overflow-hidden">
 			<div className="absolute inset-0">
 				<Image
-					src="/HeroCable.png"
+					src="/HeroCable.webp"
 					alt=""
 					fill
 					priority

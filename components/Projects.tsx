@@ -8,7 +8,7 @@ const fallbackProjects = [
 		category: 'Instalacje',
 		description:
 			'Kompleksowa instalacja elektryczna w nowym domu o pow. 180m². Inteligentne oświetlenie, gniazdka w każdym pokoju.',
-		image: '/img/instalacjaWDomuJednorodzinnym.jpg',
+		image: '/img/instalacjaWDomuJednorodzinnym.webp',
 	},
 	{
 		title: 'Modernizacja biura',
