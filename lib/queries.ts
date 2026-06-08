@@ -384,7 +384,7 @@ export async function getBlogPostBySlug(slug: string): Promise<SanityBlogPost | 
 }
 
 const relatedBlogPostsQuery = groq`
-	*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc)[0...3] {
+	*[_type == "blogPost" && slug.current != $slug && category == $category] | order(publishedAt desc)[0...3] {
 		_id, title, slug, excerpt, coverImage, publishedAt, category
 	}
 `

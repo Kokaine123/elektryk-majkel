@@ -6,17 +6,40 @@ const rateLimitMap = new Map<string, { count: number; resetAt: number }>()
 const RATE_LIMIT_MAX = 3
 const RATE_LIMIT_WINDOW = 60 * 60 * 1000 // 1 hour
 
-function isRateLimited(ip: string): boolean {
+function cleanupRateLimitMap(now: number) {
+	for (const [key, value] of rateLimitMap.entries()) {
+		if (now > value.resetAt) rateLimitMap.delete(key)
+	}
+}
+
+function parseClientIp(req: NextRequest): string {
+	const forwardedFor = req.headers.get('x-forwarded-for')
+	if (forwardedFor) {
+		const first = forwardedFor.split(',')[0]?.trim()
+		if (first) return first
+	}
+	return req.headers.get('x-real-ip') || 'unknown'
+}
+
+function isRateLimited(ip: string): { limited: boolean; remaining: number; resetAt: number } {
 	const now = Date.now()
+	cleanupRateLimitMap(now)
 	const entry = rateLimitMap.get(ip)
 
 	if (!entry || now > entry.resetAt) {
-		rateLimitMap.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW })
-		return false
+		const resetAt = now + RATE_LIMIT_WINDOW
+		rateLimitMap.set(ip, { count: 1, resetAt })
+		return { limited: false, remaining: RATE_LIMIT_MAX - 1, resetAt }
 	}
 
 	entry.count++
-	return entry.count > RATE_LIMIT_MAX
+	const limited = entry.count > RATE_LIMIT_MAX
+	const remaining = Math.max(0, RATE_LIMIT_MAX - entry.count)
+	return { limited, remaining, resetAt: entry.resetAt }
+}
+
+function normalizeHost(hostHeader: string): string {
+	return hostHeader.split(',')[0].trim().toLowerCase()
 }
 
 // ── Validation helpers ──
@@ -33,16 +56,37 @@ const ALLOWED_MIME = ['image/jpeg', 'image/png', 'image/webp', 'image/heic']
 
 export async function POST(req: NextRequest) {
 	// Rate limiting
-	const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || req.headers.get('x-real-ip') || 'unknown'
-	if (isRateLimited(ip)) {
-		return NextResponse.json({ error: 'Zbyt wiele wiadomości. Spróbuj ponownie za godzinę.' }, { status: 429 })
+	const ip = parseClientIp(req)
+	const rateLimit = isRateLimited(ip)
+	if (rateLimit.limited) {
+		const retryAfterSeconds = Math.max(1, Math.ceil((rateLimit.resetAt - Date.now()) / 1000))
+		return NextResponse.json(
+			{ error: 'Zbyt wiele wiadomości. Spróbuj ponownie za godzinę.' },
+			{
+				status: 429,
+				headers: {
+					'Retry-After': String(retryAfterSeconds),
+					'X-RateLimit-Limit': String(RATE_LIMIT_MAX),
+					'X-RateLimit-Remaining': String(rateLimit.remaining),
+					'X-RateLimit-Reset': String(rateLimit.resetAt),
+				},
+			},
+		)
 	}
 
 	// Origin check (basic CSRF)
 	const origin = req.headers.get('origin')
-	const host = req.headers.get('host')
-	if (origin && host && !origin.includes(host)) {
-		return NextResponse.json({ error: 'Niedozwolone źródło' }, { status: 403 })
+	const hostHeader = req.headers.get('x-forwarded-host') || req.headers.get('host')
+	if (origin && hostHeader) {
+		try {
+			const originHost = new URL(origin).host.toLowerCase()
+			const expectedHost = normalizeHost(hostHeader)
+			if (originHost !== expectedHost) {
+				return NextResponse.json({ error: 'Niedozwolone źródło' }, { status: 403 })
+			}
+		} catch {
+			return NextResponse.json({ error: 'Nieprawidłowe źródło' }, { status: 403 })
+		}
 	}
 
 	try {

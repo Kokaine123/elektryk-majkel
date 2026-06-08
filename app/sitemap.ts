@@ -3,7 +3,7 @@ import { getAllCitySlugs, getAllBlogSlugs, getAllServicePageSlugs } from '@/lib/
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	const baseUrl = 'https://elektrykmajkel.pl'
-	const now = new Date()
+	const staticLastModified = new Date('2026-01-01T00:00:00.000Z')
 
 	const [citySlugs, blogSlugs, serviceSlugs] = await Promise.all([
 		getAllCitySlugs().catch(() => []),
@@ -13,21 +13,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 	const cityPages = citySlugs.map(slug => ({
 		url: `${baseUrl}/uslugi/elektryk-${slug}`,
-		lastModified: now,
 		changeFrequency: 'monthly' as const,
 		priority: 0.7,
 	}))
 
 	const blogPages = blogSlugs.map(slug => ({
 		url: `${baseUrl}/blog/${slug}`,
-		lastModified: now,
 		changeFrequency: 'weekly' as const,
 		priority: 0.6,
 	}))
 
 	const servicePages = serviceSlugs.map(slug => ({
 		url: `${baseUrl}/uslugi/${slug}`,
-		lastModified: now,
 		changeFrequency: 'monthly' as const,
 		priority: 0.8,
 	}))
@@ -35,25 +32,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	return [
 		{
 			url: baseUrl,
-			lastModified: now,
+			lastModified: staticLastModified,
 			changeFrequency: 'weekly',
 			priority: 1,
 		},
 		{
 			url: `${baseUrl}/blog`,
-			lastModified: now,
+			lastModified: staticLastModified,
 			changeFrequency: 'weekly',
 			priority: 0.8,
 		},
 		{
 			url: `${baseUrl}/polityka-prywatnosci`,
-			lastModified: now,
+			lastModified: staticLastModified,
 			changeFrequency: 'yearly',
 			priority: 0.3,
 		},
 		{
 			url: `${baseUrl}/regulamin`,
-			lastModified: now,
+			lastModified: staticLastModified,
 			changeFrequency: 'yearly',
 			priority: 0.3,
 		},

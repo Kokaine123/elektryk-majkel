@@ -86,8 +86,8 @@ export default function Navbar({ phone, navItems }: { phone?: string; navItems?:
 				hidden ? '-translate-y-[300px]' : 'translate-y-0'
 			} ${
 				scrolled
-					? 'bg-[#faf9f6]/95 backdrop-blur-xl shadow-lg shadow-gray-200/50 border-b border-gray-200/80'
-					: 'bg-[#faf9f6]/60 backdrop-blur-md border-b border-gray-200/30'
+					? 'bg-[#faf9f6]/95 lg:bg-white backdrop-blur-xl shadow-lg shadow-gray-200/50 border-b border-gray-200/80'
+					: 'bg-[#faf9f6]/60 lg:bg-white/95 backdrop-blur-md border-b border-gray-200/30 lg:border-gray-200/80'
 			}`}>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="flex items-center justify-between h-16 relative">
@@ -186,7 +186,7 @@ export default function Navbar({ phone, navItems }: { phone?: string; navItems?:
 				className={`lg:hidden overflow-hidden transition-all duration-300 ease-in-out ${
 					isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
 				}`}>
-				<div className="bg-[#faf9f6]/95 backdrop-blur-xl border-t border-gray-200/80">
+				<div className="bg-white/95 backdrop-blur-xl border-t border-gray-200/80">
 					<div className="px-4 py-4 space-y-1">
 						{links.map((link, i) => (
 							<a

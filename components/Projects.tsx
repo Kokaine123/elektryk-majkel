@@ -60,12 +60,10 @@ export default async function Projects() {
 
 	try {
 		const sanityProjects = await getProjects()
-		projects = sanityProjects.length > 0 ? sanityProjects.map(sanityToProject) : []
+		projects = sanityProjects.length > 0 ? sanityProjects.map(sanityToProject) : fallbackProjects
 	} catch {
-		projects = []
+		projects = fallbackProjects
 	}
-
-	if (projects.length === 0) return null
 
 	return (
 		<section id="realizacje" aria-label="Nasze realizacje" className="py-24 bg-[#f3f2ef]">

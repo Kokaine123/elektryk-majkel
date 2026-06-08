@@ -5,6 +5,22 @@ const withBundleAnalyzer = bundleAnalyzer({
 	enabled: process.env.ANALYZE === 'true',
 })
 
+const contentSecurityPolicy = [
+	"default-src 'self'",
+	"base-uri 'self'",
+	"object-src 'none'",
+	"frame-ancestors 'none'",
+	"form-action 'self'",
+	"script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net",
+	"style-src 'self' 'unsafe-inline'",
+	"img-src 'self' data: blob: https://cdn.sanity.io https://www.googletagmanager.com https://www.facebook.com https://*.tile.openstreetmap.org https://unpkg.com",
+	"font-src 'self' data: https://fonts.gstatic.com",
+	"connect-src 'self' https://cdn.sanity.io https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://www.facebook.com",
+	"frame-src https://www.googletagmanager.com",
+	"worker-src 'self' blob:",
+	'upgrade-insecure-requests',
+].join('; ')
+
 const nextConfig: NextConfig = {
 	turbopack: {},
 	devIndicators: false,
@@ -55,9 +71,12 @@ const nextConfig: NextConfig = {
 				headers: [
 					{ key: 'X-Content-Type-Options', value: 'nosniff' },
 					{ key: 'X-Frame-Options', value: 'DENY' },
-					{ key: 'X-XSS-Protection', value: '1; mode=block' },
 					{ key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
 					{ key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+					{ key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
+					{ key: 'Cross-Origin-Resource-Policy', value: 'same-site' },
+					{ key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains; preload' },
+					{ key: 'Content-Security-Policy', value: contentSecurityPolicy },
 				],
 			},
 		]

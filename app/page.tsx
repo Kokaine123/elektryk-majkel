@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import Navbar from '@/components/Navbar'
 import Hero from '@/components/Hero'
+import CtaBanner from '@/components/CtaBanner'
 import Services from '@/components/Services'
 import About from '@/components/About'
 
@@ -259,8 +260,9 @@ export default async function Home() {
 				{show.services && <Services />}
 				{show.about && <About />}
 				{show.projects && <Projects />}
-				{blogPosts.length > 0 && <BlogSlider posts={blogPosts} imageUrls={blogImageUrls} />}
 				{show.contact && <Contact contactInfo={contactInfo || undefined} />}
+				<CtaBanner />
+				{blogPosts.length > 0 && <BlogSlider posts={blogPosts} imageUrls={blogImageUrls} />}
 				{show.map && <MapWrapper cities={mapCities.length > 0 ? mapCities : undefined} />}
 				{show.reviews && <Reviews initialReviews={reviews.length > 0 ? reviews : undefined} />}
 				{show.faq && <FAQ initialFaqs={faqItems.length > 0 ? faqItems : undefined} />}

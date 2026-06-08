@@ -32,32 +32,23 @@ export default function Hero({ data }: HeroProps) {
 		<section
 			id="start"
 			aria-label="Strona główna"
-			className="relative min-h-screen flex items-center justify-center overflow-hidden">
-			{/* Background gradient */}
-			<div className="absolute inset-0 bg-gradient-to-br from-[#f3f2ef] via-[#faf9f6] to-[#f0efec]" />
-
-			{/* Decorative electricity lines */}
-			<div className="absolute inset-0 opacity-10">
-				<div className="absolute top-1/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-				<div className="absolute top-2/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
-				<div className="absolute top-3/4 left-0 w-full h-px bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-			</div>
-
-			{/* Glowing orb */}
-			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-amber-500/10 rounded-full blur-3xl" />
+			className="relative min-h-screen flex items-center justify-center overflow-hidden bg-cover bg-center bg-no-repeat bg-fixed"
+			style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.58), rgba(0,0,0,0.58)), url(/HeroCable.png)' }}>
+			{/* Subtle glow layer for depth */}
+			<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[650px] bg-amber-500/10 rounded-full blur-3xl" />
 
 			<div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-20 pb-12 sm:pb-0">
 				{/* Badge */}
 				{badgeText && (
-					<div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 rounded-full px-4 py-1.5 mb-8">
+					<div className="inline-flex items-center gap-2 bg-amber-500/15 border border-amber-400/35 rounded-full px-4 py-1.5 mb-8">
 						<div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
-						<span className="text-amber-700 text-sm font-medium">{badgeText}</span>
+						<span className="text-amber-200 text-sm font-medium">{badgeText}</span>
 					</div>
 				)}
 
 				{/* Main heading */}
 				{(headingLine1 || headingLine2) && (
-					<h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-gray-900">
+					<h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-6 text-white">
 						{headingLine1}
 						{headingLine1 && headingLine2 && <br />}
 						{headingLine2 && (
@@ -69,7 +60,7 @@ export default function Hero({ data }: HeroProps) {
 				)}
 
 				{description && (
-					<p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">{description}</p>
+					<p className="text-lg sm:text-xl text-gray-200 max-w-2xl mx-auto mb-10 leading-relaxed">{description}</p>
 				)}
 
 				{/* CTA buttons */}
@@ -85,9 +76,9 @@ export default function Hero({ data }: HeroProps) {
 						{phoneNumber && (
 							<a
 								href={telHref}
-								className="w-full sm:w-auto border border-gray-300 hover:border-amber-500 text-gray-700 font-semibold px-8 py-4 rounded-xl text-lg transition-all duration-200 hover:bg-[#f3f2ef] cursor-pointer inline-flex items-center justify-center gap-2">
+								className="w-full sm:w-auto border border-white/35 hover:border-amber-400 text-white font-semibold px-8 py-4 rounded-xl text-lg transition-all duration-200 hover:bg-white/10 cursor-pointer inline-flex items-center justify-center gap-2">
 								<svg
-									className="w-5 h-5 text-amber-500"
+									className="w-5 h-5 text-amber-300"
 									fill="none"
 									stroke="currentColor"
 									viewBox="0 0 24 24"
@@ -111,7 +102,7 @@ export default function Hero({ data }: HeroProps) {
 						{stats.map(stat => (
 							<div key={stat.label} className="text-center">
 								<div className="text-3xl md:text-4xl font-extrabold text-amber-500">{stat.value}</div>
-								<div className="text-sm text-gray-600 mt-1">{stat.label}</div>
+								<div className="text-sm text-gray-200 mt-1">{stat.label}</div>
 							</div>
 						))}
 					</div>
@@ -130,7 +121,7 @@ export default function Hero({ data }: HeroProps) {
 				aria-label="Przewiń do następnej sekcji"
 				className="hidden sm:block absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce cursor-pointer hover:text-amber-500 transition-colors">
 				<svg
-					className="w-6 h-6 text-gray-500 hover:text-amber-500 transition-colors"
+					className="w-6 h-6 text-gray-300 hover:text-amber-400 transition-colors"
 					fill="none"
 					stroke="currentColor"
 					viewBox="0 0 24 24"

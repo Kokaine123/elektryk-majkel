@@ -114,7 +114,11 @@ export default async function About() {
 	}
 
 	return (
-		<section id="o-nas" aria-label="O nas" className="py-24 bg-gray-900">
+		<section
+			id="o-nas"
+			aria-label="O nas"
+			className="py-24 bg-gray-900 bg-cover bg-center bg-no-repeat bg-fixed"
+			style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url(/backgrounsSectionSep.png)' }}>
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 				<div className="grid lg:grid-cols-2 gap-16 items-center">
 					{/* Left: Text content */}
@@ -126,7 +130,7 @@ export default async function About() {
 								Elektryk {about.yearsExperience}
 							</span>
 						</h2>
-						<p className="text-gray-400 text-lg leading-relaxed mb-8">{about.description}</p>
+						<p className="text-white text-lg leading-relaxed mb-8">{about.description}</p>
 
 						<div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
 							{features.map(feature => (
@@ -135,8 +139,20 @@ export default async function About() {
 										<FeatureIcon name={feature.icon} />
 									</div>
 									<div>
-										<h3 className="font-bold mb-1 text-white">{feature.title}</h3>
-										<p className="text-gray-400 text-sm leading-relaxed">{feature.description}</p>
+										<h3
+											className={`font-bold mb-1 ${
+												[
+													'uprawnienia sep',
+													'szybka realizacja',
+													'gwarancja na prace',
+													'uczciwe ceny',
+												].some(label => feature.title.toLowerCase().includes(label))
+													? 'text-amber-400'
+													: 'text-white'
+											}`}>
+											{feature.title}
+										</h3>
+										<p className="text-white text-sm leading-relaxed">{feature.description}</p>
 									</div>
 								</div>
 							))}
@@ -145,9 +161,15 @@ export default async function About() {
 
 					{/* Right: Visual card */}
 					<div className="relative">
-						<div className="bg-gray-800 border border-white/10 rounded-3xl p-10 relative overflow-hidden">
-							{/* Decorative gradient */}
-							<div className="absolute top-0 right-0 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl" />
+						<div className="bg-gray-800/90 border border-white/10 rounded-3xl p-10 relative overflow-hidden shadow-[0_30px_120px_rgba(0,0,0,0.45)] backdrop-blur-sm">
+							{/* Decorative blurred background layers */}
+							<div className="pointer-events-none absolute inset-0">
+								<div className="absolute -top-14 -right-14 w-64 h-64 bg-amber-500/20 rounded-full blur-3xl" />
+								<div className="absolute -bottom-20 -left-16 w-72 h-72 bg-sky-500/10 rounded-full blur-3xl" />
+								<div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[26rem] h-[26rem] bg-white/5 rounded-full blur-3xl" />
+								<div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(245,158,11,0.14),transparent_45%),radial-gradient(circle_at_bottom_left,rgba(56,189,248,0.12),transparent_48%)]" />
+								<div className="absolute inset-0 bg-gradient-to-b from-white/[0.03] via-transparent to-black/10" />
+							</div>
 
 							<div className="relative space-y-8">
 								{/* Experience counter */}
