@@ -99,12 +99,45 @@ const cityGenitive: Record<string, string> = {
 	'Radomyśl nad Sanem': 'Radomyśla nad Sanem',
 }
 
+const citySeoOverrides: Record<
+	string,
+	{
+		title: string
+		description: string
+	}
+> = {
+	'stalowa-wola': {
+		title: 'Elektryk Stalowa Wola | Elektryk SEP, szybki dojazd i wycena',
+		description:
+			'Elektryk SEP w Stalowej Woli: instalacje, naprawy awaryjne, modernizacje i pomiary. Szybki dojazd, bezpłatna wycena i terminowa realizacja.',
+	},
+	sandomierz: {
+		title: 'Elektryk Sandomierz | Instalacje i naprawy elektryczne SEP',
+		description:
+			'Profesjonalny elektryk SEP w Sandomierzu: instalacje, awarie, pomiary i modernizacje. Szybki termin, dojazd i bezpłatna wycena.',
+	},
+	nisko: {
+		title: 'Elektryk Nisko | Instalacje, awarie i pomiary SEP',
+		description:
+			'Elektryk SEP w Nisku: instalacje elektryczne, naprawy awaryjne, modernizacje i pomiary z protokołem. Szybki dojazd i bezpłatna wycena.',
+	},
+	tarnobrzeg: {
+		title: 'Elektryk Tarnobrzeg | Szybki dojazd i bezpłatna wycena',
+		description:
+			'Profesjonalne usługi elektryczne w Tarnobrzegu: instalacje, naprawy, pomiary i modernizacje. Certyfikowany elektryk SEP, szybki termin realizacji.',
+	},
+}
+
 // Helpers: get declined form, fallback to original name
 function getLocative(name: string): string {
 	return cityLocative[name] || name
 }
 function getGenitive(name: string): string {
 	return cityGenitive[name] || name
+}
+
+function getCityVariantSeed(name: string): number {
+	return Array.from(name).reduce((sum, char) => sum + char.charCodeAt(0), 0)
 }
 
 // Icon helper for service cards
@@ -199,10 +232,12 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 	// Service page (slug doesn't start with "elektryk-")
 	if (!miasto.startsWith('elektryk-')) {
 		const servicePage = await getServicePageBySlug(miasto).catch(() => null)
-		if (!servicePage) return { title: 'Nie znaleziono strony' }
+		if (!servicePage) return { title: 'Nie znaleziono strony', robots: { index: false, follow: false } }
 
 		const title = servicePage.metaTitle || `${servicePage.title} | Elektryk Majkel`
-		const description = servicePage.metaDescription || servicePage.intro.slice(0, 155)
+		const description =
+			servicePage.metaDescription ||
+			`${servicePage.title} — profesjonalna realizacja usługi przez elektryka SEP. Szybki termin, bezpieczne wykonanie i bezpłatna wycena.`
 
 		return {
 			title,
@@ -225,6 +260,11 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 					}],
 				}),
 			},
+			twitter: {
+				card: 'summary_large_image',
+				title,
+				description,
+			},
 			robots: { index: true, follow: true },
 		}
 	}
@@ -234,28 +274,24 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 	const city = await getCityBySlug(slug)
 
 	if (!city) {
-		return { title: 'Nie znaleziono miasta' }
+		return { title: 'Nie znaleziono miasta', robots: { index: false, follow: false } }
 	}
 
-	const title = city.metaTitle || `Elektryk ${city.name} - Usługi Elektryczne | Elektryk Majkel`
+	const override = citySeoOverrides[slug]
+	const title = city.metaTitle || override?.title || `Elektryk ${city.name} - Usługi Elektryczne | Elektryk Majkel`
 	const description =
 		city.metaDescription ||
-		`Profesjonalne usługi elektryczne w ${getLocative(city.name)}. Instalacje, naprawy, modernizacje. Certyfikowany elektryk SEP. Dojazd z Radomyśla nad Sanem.`
+		override?.description ||
+		`Elektryk w ${getLocative(city.name)}: instalacje, naprawy awaryjne, modernizacje i pomiary. Certyfikowany elektryk SEP z szybkim dojazdem i bezpłatną wyceną.`
 
 	const keywords = [
 		`elektryk ${city.name}`,
 		`usługi elektryczne ${city.name}`,
-		`instalacje elektryczne ${city.name}`,
 		`elektryk awaryjny ${city.name}`,
-		`naprawa instalacji ${city.name}`,
+		`instalacje elektryczne ${city.name}`,
 		`pomiary elektryczne ${city.name}`,
-		`modernizacja instalacji ${city.name}`,
-		`elektryk z dojazdem ${city.name}`,
-		`podłączenie AGD ${city.name}`,
-		`oświetlenie LED ${city.name}`,
-		'elektryk Radomyśl nad Sanem',
 		'certyfikowany elektryk SEP',
-		'usługi elektryczne podkarpackie',
+		'elektryk z dojazdem',
 	]
 
 	return {
@@ -272,6 +308,11 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 			locale: 'pl_PL',
 			url: `https://elektrykmajkel.pl/uslugi/elektryk-${slug}`,
 			siteName: 'Elektryk Majkel',
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title,
+			description,
 		},
 		robots: { index: true, follow: true },
 	}
@@ -314,10 +355,36 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 	const businessName = seoSettings?.businessName || 'Elektryk Majkel'
 	const heading = city.pageHeading || `Elektryk ${city.name}`
 	const distanceText = city.distanceKm ? `${city.distanceKm} km od Radomyśla nad Sanem` : null
+	const variant = getCityVariantSeed(city.name) % 3
+	const locativeCity = getLocative(city.name)
+	const genitiveCity = getGenitive(city.name)
 
 	const description =
 		city.pageDescription ||
-		`Szukasz zaufanego elektryka w ${getLocative(city.name)}? ${businessName} oferuje profesjonalne usługi elektryczne z dojazdem do ${getGenitive(city.name)}${distanceText ? ` (${distanceText})` : ''}. Posiadamy uprawnienia SEP i gwarantujemy solidne wykonanie każdego zlecenia.`
+		[
+			`Szukasz zaufanego elektryka w ${locativeCity}? ${businessName} oferuje profesjonalne usługi elektryczne z dojazdem do ${genitiveCity}${distanceText ? ` (${distanceText})` : ''}. Posiadamy uprawnienia SEP i gwarantujemy solidne wykonanie każdego zlecenia.`,
+			`Realizujemy zlecenia elektryczne w ${locativeCity} i okolicy: od szybkich napraw awaryjnych po pełne modernizacje instalacji. Dojazd do ${genitiveCity}${distanceText ? ` (${distanceText})` : ''} organizujemy sprawnie, a wycena jest bezpłatna.`,
+			`Potrzebny elektryk w ${locativeCity}? ${businessName} zapewnia bezpieczne instalacje, pomiary i serwis awaryjny z dojazdem do ${genitiveCity}${distanceText ? ` (${distanceText})` : ''}. Pracujemy terminowo, zgodnie z normami i z pełną odpowiedzialnością za efekt.`,
+		][variant]
+
+	const localProofPoints = [
+		{
+			title: `Dojazd do ${genitiveCity}`,
+			description: distanceText
+				? `Obsługujemy ${genitiveCity} regularnie. Typowy czas dojazdu przy awarii to ${city.distanceKm && city.distanceKm <= 30 ? '1-2 godziny' : '2-3 godziny'}.`
+				: `Obsługujemy ${genitiveCity} i najbliższe miejscowości w trybie planowym oraz awaryjnym.`,
+		},
+		{
+			title: 'Zakres lokalnych realizacji',
+			description:
+				'Najczęściej wykonujemy modernizacje instalacji, rozbudowę obwodów, montaż zabezpieczeń, pomiary i usuwanie usterek.',
+		},
+		{
+			title: 'Transparentna wycena',
+			description:
+				'Przed rozpoczęciem prac przekazujemy zakres, koszt i orientacyjny termin realizacji. Dzięki temu klient zna warunki z góry.',
+		},
+	]
 
 	// Full GBP services list for JSON-LD
 	const gbpDetailedServices = [
@@ -452,6 +519,14 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 		{
 			question: `Czy elektryk w ${getLocative(city.name)} posiada uprawnienia?`,
 			answer: `Tak — posiadamy pełne uprawnienia SEP (Stowarzyszenie Elektryków Polskich) do prac przy instalacjach do 1 kV. Wszystkie usługi w ${getLocative(city.name)} wykonujemy zgodnie z aktualnymi normami i przepisami.`,
+		},
+		{
+			question: `Czy wykonujecie pomiary elektryczne w ${getLocative(city.name)} z protokołem?`,
+			answer: `Tak. W ${getLocative(city.name)} realizujemy pomiary instalacji elektrycznych i przygotowujemy protokoły pomiarowe. Zakres pomiarów dobieramy do typu obiektu i celu przeglądu.`,
+		},
+		{
+			question: `Czy mogę dostać wycenę przed przyjazdem do ${getGenitive(city.name)}?`,
+			answer: `Tak — po krótkiej rozmowie i opisie problemu przekazujemy orientacyjną wycenę oraz możliwy termin dojazdu do ${getGenitive(city.name)}. Ostateczny koszt potwierdzamy po oględzinach na miejscu.`,
 		},
 	]
 
@@ -594,6 +669,26 @@ export default async function CityPage({ params }: { params: Promise<{ miasto: s
 									subItems={serviceSubItems[service.title]}
 									href={servicePageSlugs[service.title] ? `/uslugi/${servicePageSlugs[service.title]}` : undefined}
 								/>
+							))}
+						</div>
+					</div>
+				</section>
+
+				{/* Local proof section */}
+				<section className="py-16 sm:py-20 bg-white">
+					<div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+						<div className="text-center mb-10">
+							<span className="text-amber-700 font-semibold text-sm uppercase tracking-wider">Lokalnie</span>
+							<h2 className="text-2xl sm:text-3xl font-bold mt-3">
+								Realna obsługa klientów w <span className="text-amber-700">{locativeCity}</span>
+							</h2>
+						</div>
+						<div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+							{localProofPoints.map(point => (
+								<div key={point.title} className="rounded-2xl border border-gray-200 p-6 bg-[#faf9f6]">
+									<h3 className="text-lg font-bold text-gray-900 mb-2">{point.title}</h3>
+									<p className="text-gray-600 text-sm leading-relaxed">{point.description}</p>
+								</div>
 							))}
 						</div>
 					</div>

@@ -7,15 +7,31 @@ const SLUG = 'polityka-prywatnosci'
 
 export async function generateMetadata(): Promise<Metadata> {
 	const page = await getLegalPageBySlug(SLUG)
+	const hasContent = !!page?.content?.length
+	const title = page?.metaTitle || 'Polityka prywatności | Elektryk Majkel'
+	const description =
+		page?.metaDescription ||
+		'Polityka prywatności serwisu elektrykmajkel.pl. Informacje o przetwarzaniu danych osobowych zgodnie z RODO.'
 	return {
-		title: page?.metaTitle || 'Polityka prywatności | Elektryk Majkel',
-		description:
-			page?.metaDescription ||
-			'Polityka prywatności serwisu elektrykmajkel.pl. Informacje o przetwarzaniu danych osobowych zgodnie z RODO.',
+		title,
+		description,
 		alternates: {
 			canonical: 'https://elektrykmajkel.pl/polityka-prywatnosci',
 		},
-		robots: { index: true, follow: true },
+		openGraph: {
+			title,
+			description,
+			type: 'article',
+			locale: 'pl_PL',
+			url: 'https://elektrykmajkel.pl/polityka-prywatnosci',
+			siteName: 'Elektryk Majkel',
+		},
+		twitter: {
+			card: 'summary',
+			title,
+			description,
+		},
+		robots: hasContent ? { index: true, follow: true } : { index: false, follow: false },
 	}
 }
 

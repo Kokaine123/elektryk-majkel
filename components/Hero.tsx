@@ -20,7 +20,7 @@ export default function Hero({ data }: HeroProps) {
 	const headingLine2 = data?.headingLine2 ?? 'Usługi Elektryczne'
 	const description =
 		data?.description ??
-		'Instalacje, naprawy i modernizacje elektryczne. Działamy szybko, solidnie i\u00a0bezpiecznie. Ponad 10 lat doświadczenia w branży.'
+		'Instalacje, naprawy awaryjne i modernizacje elektryczne dla domów i firm. Obsługujemy Radomyśl nad Sanem i okolice z szybkim dojazdem oraz bezpłatną wyceną.'
 	const ctaText = data?.ctaText ?? 'Bezpłatna wycena →'
 	const ctaLink = data?.ctaLink ?? '#kontakt'
 	const phoneNumber = data?.phoneNumber ?? '+48 537 751 820'

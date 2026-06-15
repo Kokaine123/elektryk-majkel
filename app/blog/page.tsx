@@ -7,17 +7,22 @@ import { urlFor } from '@/lib/sanity'
 export const metadata: Metadata = {
 	title: 'Blog | Elektryk Majkel — Porady i Realizacje',
 	description:
-		'Blog o instalacjach elektrycznych, bramach automatycznych, smart home i poradach elektrycznych. Praktyczna wiedza od certyfikowanego elektryka SEP.',
+		'Porady elektryka SEP: instalacje, awarie, modernizacje, bramy automatyczne i smart home. Praktyczne wskazówki dla właścicieli domów i firm.',
 	alternates: {
 		canonical: 'https://elektrykmajkel.pl/blog',
 	},
 	openGraph: {
 		title: 'Blog | Elektryk Majkel',
-		description: 'Porady elektryczne, realizacje i aktualności od Elektryk Majkel.',
+		description: 'Porady elektryczne, realizacje i aktualności od elektryka SEP.',
 		type: 'website',
 		locale: 'pl_PL',
 		url: 'https://elektrykmajkel.pl/blog',
 		siteName: 'Elektryk Majkel',
+	},
+	twitter: {
+		card: 'summary_large_image',
+		title: 'Blog | Elektryk Majkel',
+		description: 'Porady elektryczne, realizacje i aktualności od elektryka SEP.',
 	},
 }
 
@@ -32,9 +37,45 @@ const categoryLabels: Record<string, string> = {
 
 export default async function BlogPage() {
 	const posts = await getBlogPosts().catch(() => [])
+	const blogSchema =
+		posts.length > 0
+			? {
+					'@context': 'https://schema.org',
+					'@type': 'Blog',
+					name: 'Blog Elektryk Majkel',
+					url: 'https://elektrykmajkel.pl/blog',
+					description:
+						'Porady i aktualności o instalacjach elektrycznych, awariach, smart home oraz realizacjach.',
+					publisher: {
+						'@type': 'Organization',
+						name: 'Elektryk Majkel',
+						url: 'https://elektrykmajkel.pl',
+					},
+				}
+			: null
+
+	const itemListSchema =
+		posts.length > 0
+			? {
+					'@context': 'https://schema.org',
+					'@type': 'ItemList',
+					itemListElement: posts.map((post, index) => ({
+						'@type': 'ListItem',
+						position: index + 1,
+						url: `https://elektrykmajkel.pl/blog/${post.slug.current}`,
+						name: post.title,
+					})),
+				}
+			: null
 
 	return (
 		<>
+			{blogSchema && (
+				<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }} />
+			)}
+			{itemListSchema && (
+				<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }} />
+			)}
 			{/* Navigation */}
 			<nav className="bg-gray-950 text-white" aria-label="Nawigacja">
 				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">

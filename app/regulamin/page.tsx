@@ -7,13 +7,29 @@ const SLUG = 'regulamin'
 
 export async function generateMetadata(): Promise<Metadata> {
 	const page = await getLegalPageBySlug(SLUG)
+	const hasContent = !!page?.content?.length
+	const title = page?.metaTitle || 'Regulamin | Elektryk Majkel'
+	const description = page?.metaDescription || 'Regulamin korzystania z serwisu internetowego elektrykmajkel.pl.'
 	return {
-		title: page?.metaTitle || 'Regulamin | Elektryk Majkel',
-		description: page?.metaDescription || 'Regulamin korzystania z serwisu internetowego elektrykmajkel.pl.',
+		title,
+		description,
 		alternates: {
 			canonical: 'https://elektrykmajkel.pl/regulamin',
 		},
-		robots: { index: true, follow: true },
+		openGraph: {
+			title,
+			description,
+			type: 'article',
+			locale: 'pl_PL',
+			url: 'https://elektrykmajkel.pl/regulamin',
+			siteName: 'Elektryk Majkel',
+		},
+		twitter: {
+			card: 'summary',
+			title,
+			description,
+		},
+		robots: hasContent ? { index: true, follow: true } : { index: false, follow: false },
 	}
 }
 

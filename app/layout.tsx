@@ -26,99 +26,23 @@ export const viewport: Viewport = {
 const defaultMeta = {
 	title: 'Elektryk Majkel | Usługi Elektryczne Radomyśl nad Sanem',
 	description:
-		'Profesjonalne usługi elektryczne - instalacje, naprawy, modernizacje. Certyfikowany elektryk SEP. Radomyśl nad Sanem i okolice. Szybko, solidnie, bezpiecznie.',
+		'Elektryk z uprawnieniami SEP: instalacje, naprawy awaryjne, modernizacje i pomiary. Radomyśl nad Sanem, Stalowa Wola, Tarnobrzeg i okolice. Szybki dojazd i bezpłatna wycena.',
 	keywords: [
-		// Lokalne frazy główne
 		'elektryk Radomyśl nad Sanem',
 		'elektryk Stalowa Wola',
-		'elektryk Tarnobrzeg',
-		'elektryk Nisko',
-		'elektryk Sandomierz',
-		'elektryk podkarpackie',
-		'usługi elektryczne Radomyśl nad Sanem',
-		'usługi elektryczne Stalowa Wola',
-
-		// Usługi kluczowe
 		'instalacje elektryczne',
 		'naprawy elektryczne',
-		'modernizacja instalacji elektrycznej',
-		'wymiana instalacji elektrycznej',
-		'montaż instalacji elektrycznej',
-		'przyłącze elektryczne',
-		'instalacja elektryczna w domu',
-		'instalacja elektryczna w mieszkaniu',
-
-		// Awaryjne / pilne
-		'elektryk 24/7',
 		'elektryk awaryjny',
-		'awaria prądu',
-		'naprawa awaryjna instalacji elektrycznej',
-		'pogotowie elektryczne',
-
-		// Smart home / nowoczesne
-		'smart home',
-		'inteligentny dom instalacja',
-		'automatyka domowa',
-		'sterowanie oświetleniem',
-
-		// Oświetlenie
 		'oświetlenie LED',
-		'montaż oświetlenia',
-		'oświetlenie ogrodowe',
-		'oświetlenie zewnętrzne',
-		'wymiana oświetlenia',
-
-		// Pomiary / certyfikacja
 		'pomiary elektryczne',
-		'przegląd instalacji elektrycznej',
-		'protokół pomiarów elektrycznych',
-		'badanie instalacji elektrycznej',
 		'uprawnienia SEP',
-		'certyfikowany elektryk',
-
-		// Rozdzielnice / tablice
-		'montaż rozdzielnicy',
-		'wymiana tablicy elektrycznej',
-		'rozdzielnia elektryczna',
-		'wymiana bezpieczników',
-
-		// AGD / gniazdka
-		'podłączenie kuchenki indukcyjnej',
-		'podłączenie płyty indukcyjnej',
-		'montaż gniazdek',
-		'wymiana gniazdek i włączników',
-		'podłączenie AGD',
-
-		// Fotowoltaika / ładowarki
-		'podłączenie fotowoltaiki',
-		'instalacja wallbox',
-		'ładowarka samochodu elektrycznego',
-
-		// Bramy / alarmy / zabezpieczenia
 		'bramy automatyczne',
-		'montaż bramy automatycznej',
+		'modernizacja instalacji elektrycznej',
+		'usługi elektryczne',
+		'podłączenie płyty indukcyjnej',
 		'instalacja alarmu',
-		'system zabezpieczeń',
-		'montaż alarmu domowego',
-
-		// Naprawy szczegółowe (GBP)
-		'naprawa paneli elektrycznych',
-		'naprawa urządzeń elektrycznych',
-		'naprawa wentylatorów',
-		'naprawa oświetlenia',
-		'przywracanie zasilania elektrycznego',
-		'wymiana opornika cieplnego',
-		'przenoszenie gniazdek elektrycznych',
-		'montaż wentylatora',
-		'montaż przewodu uziemiającego',
-
-		// Branżowe / long-tail
-		'elektryk do domu',
-		'elektryk cennik',
-		'tani elektryk',
-		'dobry elektryk w okolicy',
+		'smart home',
 		'elektryk z dojazdem',
-		'usługi elektryczne cennik',
 	],
 }
 

@@ -1,10 +1,11 @@
-import Image from 'next/image'
-
 export default function CtaBanner() {
 	return (
 		<div className="relative w-full h-[170px] sm:h-[210px] lg:h-[300px] overflow-hidden">
 			<div className="absolute inset-y-0 left-0 w-1/2">
-				<Image src="/banerPhoto.webp" alt="" fill quality={72} sizes="50vw" className="object-cover" />
+				<div
+					className="absolute inset-0 bg-cover bg-center bg-no-repeat bg-scroll lg:bg-fixed"
+					style={{ backgroundImage: 'url("/banerPhoto.webp")' }}
+				/>
 				<div className="absolute inset-0 bg-black/45" />
 				<div className="relative z-10 h-full flex items-center justify-center -translate-x-6 px-6">
 					<p className="font-[family-name:var(--font-inter)] text-white font-black tracking-wide text-2xl sm:text-4xl lg:text-6xl">

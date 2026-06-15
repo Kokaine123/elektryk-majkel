@@ -16,10 +16,12 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
 	const { slug } = await params
 	const post = await getBlogPostBySlug(slug)
-	if (!post) return { title: 'Nie znaleziono wpisu' }
+	if (!post) return { title: 'Nie znaleziono wpisu', robots: { index: false, follow: false } }
 
 	const title = post.metaTitle || `${post.title} | Blog Elektryk Majkel`
-	const description = post.metaDescription || post.excerpt
+	const description =
+		post.metaDescription ||
+		`${post.excerpt.slice(0, 130).trim()} — praktyczne wskazówki od Elektryk Majkel.`
 
 	return {
 		title,
@@ -45,6 +47,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 					},
 				],
 			}),
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title,
+			description,
 		},
 		robots: { index: true, follow: true },
 	}
