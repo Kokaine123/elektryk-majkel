@@ -1,29 +1,63 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import { getBlogPosts } from '@/lib/queries'
+import { getBlogPosts, getSeoSettings } from '@/lib/queries'
 import { urlFor } from '@/lib/sanity'
 
-export const metadata: Metadata = {
-	title: 'Blog | Elektryk Majkel — Porady i Realizacje',
-	description:
-		'Porady elektryka SEP: instalacje, awarie, modernizacje, bramy automatyczne i smart home. Praktyczne wskazówki dla właścicieli domów i firm.',
-	alternates: {
-		canonical: 'https://elektrykmajkel.pl/blog',
-	},
-	openGraph: {
-		title: 'Blog | Elektryk Majkel',
-		description: 'Porady elektryczne, realizacje i aktualności od elektryka SEP.',
-		type: 'website',
-		locale: 'pl_PL',
-		url: 'https://elektrykmajkel.pl/blog',
-		siteName: 'Elektryk Majkel',
-	},
-	twitter: {
-		card: 'summary_large_image',
-		title: 'Blog | Elektryk Majkel',
-		description: 'Porady elektryczne, realizacje i aktualności od elektryka SEP.',
-	},
+const siteUrl = 'https://elektrykmajkel.pl'
+
+export async function generateMetadata(): Promise<Metadata> {
+	const title = 'Blog | Elektryk Majkel — Porady i Realizacje'
+	const description =
+		'Porady elektryka SEP: instalacje, awarie, modernizacje, bramy automatyczne i smart home. Praktyczne wskazówki dla właścicieli domów i firm.'
+	const ogTitle = 'Blog | Elektryk Majkel'
+	const ogDescription = 'Porady elektryczne, realizacje i aktualności od elektryka SEP.'
+
+	let ogImageUrl = `${siteUrl}/logo.webp`
+	let ogImageAlt = 'Elektryk Majkel — Blog o instalacjach elektrycznych'
+
+	try {
+		const [seo, posts] = await Promise.all([getSeoSettings(), getBlogPosts()])
+		if (seo?.ogImage?.asset) {
+			ogImageUrl = urlFor(seo.ogImage).width(1200).height(630).url()
+			ogImageAlt = seo.ogImage.alt || ogImageAlt
+		} else if (posts[0]?.coverImage?.asset) {
+			ogImageUrl = urlFor(posts[0].coverImage).width(1200).height(630).url()
+			ogImageAlt = posts[0].coverImage.alt || posts[0].title
+		}
+	} catch {
+		// fallback to logo.webp
+	}
+
+	return {
+		title,
+		description,
+		alternates: {
+			canonical: `${siteUrl}/blog`,
+		},
+		openGraph: {
+			title: ogTitle,
+			description: ogDescription,
+			type: 'website',
+			locale: 'pl_PL',
+			url: `${siteUrl}/blog`,
+			siteName: 'Elektryk Majkel',
+			images: [
+				{
+					url: ogImageUrl,
+					width: 1200,
+					height: 630,
+					alt: ogImageAlt,
+				},
+			],
+		},
+		twitter: {
+			card: 'summary_large_image',
+			title: ogTitle,
+			description: ogDescription,
+			images: [ogImageUrl],
+		},
+	}
 }
 
 const categoryLabels: Record<string, string> = {
