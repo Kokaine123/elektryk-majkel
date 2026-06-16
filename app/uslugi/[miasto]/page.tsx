@@ -18,6 +18,23 @@ import ServicePageView from './ServicePageView'
 
 const BlogSlider = dynamic(() => import('@/components/BlogSlider'))
 
+const siteUrl = 'https://elektrykmajkel.pl'
+
+async function getGlobalOgImage(): Promise<{ url: string; alt: string }> {
+	let url = `${siteUrl}/logo.webp`
+	let alt = 'Elektryk Majkel'
+	try {
+		const seo = await getSeoSettings()
+		if (seo?.ogImage?.asset) {
+			url = urlFor(seo.ogImage).width(1200).height(630).url()
+			alt = seo.ogImage.alt || alt
+		}
+	} catch {
+		// fallback to logo.webp
+	}
+	return { url, alt }
+}
+
 // Sub-services grouped by main category (synced with GBP)
 const serviceSubItems: Record<string, string[]> = {
 	'Instalacje elektryczne': [
@@ -294,25 +311,36 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 		'elektryk z dojazdem',
 	]
 
+	const ogImage = await getGlobalOgImage()
+
 	return {
 		title,
 		description,
 		keywords,
 		alternates: {
-			canonical: `https://elektrykmajkel.pl/uslugi/elektryk-${slug}`,
+			canonical: `${siteUrl}/uslugi/elektryk-${slug}`,
 		},
 		openGraph: {
 			title,
 			description,
 			type: 'website',
 			locale: 'pl_PL',
-			url: `https://elektrykmajkel.pl/uslugi/elektryk-${slug}`,
+			url: `${siteUrl}/uslugi/elektryk-${slug}`,
 			siteName: 'Elektryk Majkel',
+			images: [
+				{
+					url: ogImage.url,
+					width: 1200,
+					height: 630,
+					alt: ogImage.alt,
+				},
+			],
 		},
 		twitter: {
 			card: 'summary_large_image',
 			title,
 			description,
+			images: [ogImage.url],
 		},
 		robots: { index: true, follow: true },
 	}
