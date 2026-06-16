@@ -86,7 +86,7 @@ const portableTextComponents = {
 			<h3 className="text-xl sm:text-2xl font-bold text-gray-900 mt-8 mb-3">{children}</h3>
 		),
 		blockquote: ({ children }: { children?: React.ReactNode }) => (
-			<blockquote className="border-l-4 border-amber-500 pl-4 my-6 text-gray-700 italic">{children}</blockquote>
+			<div className="border-l-4 border-amber-500 pl-4 my-6 text-gray-700 italic">{children}</div>
 		),
 		normal: ({ children }: { children?: React.ReactNode }) => (
 			<p className="text-gray-700 leading-relaxed mb-4">{children}</p>
