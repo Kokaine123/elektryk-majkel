@@ -389,8 +389,16 @@ const relatedBlogPostsQuery = groq`
 	}
 `
 
+const fallbackBlogPostsQuery = groq`
+	*[_type == "blogPost" && slug.current != $slug] | order(publishedAt desc)[0...3] {
+		_id, title, slug, excerpt, coverImage, publishedAt, category
+	}
+`
+
 export async function getRelatedBlogPosts(slug: string, category: string): Promise<SanityBlogPost[]> {
-	return sanityFetch(relatedBlogPostsQuery, { slug, category }, ['blogPost'])
+	const related = await sanityFetch(relatedBlogPostsQuery, { slug, category }, ['blogPost'])
+	if (related.length > 0) return related
+	return sanityFetch(fallbackBlogPostsQuery, { slug }, ['blogPost'])
 }
 
 const blogSlugsQuery = groq`

@@ -30,11 +30,9 @@ function getContentSecurityPolicy(isDev: boolean) {
 const nextConfig: NextConfig = {
 	turbopack: {},
 	devIndicators: false,
+	transpilePackages: ['sanity', '@sanity/vision', 'next-sanity', 'sanity-plugin-media'],
 	experimental: {
 		optimizePackageImports: [
-			'sanity',
-			'@sanity/vision',
-			'next-sanity',
 			'@portabletext/react',
 			'styled-components',
 			'leaflet',

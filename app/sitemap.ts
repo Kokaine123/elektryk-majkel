@@ -1,30 +1,51 @@
 import type { MetadataRoute } from 'next'
-import { getAllCitySlugs, getAllBlogSlugs, getAllServicePageSlugs } from '@/lib/queries'
+import { client } from '@/lib/sanity'
+
+export const revalidate = 3600
+
+async function fetchSlugs(type: string): Promise<string[]> {
+	try {
+		const slugs = await client.fetch<string[]>(
+			`*[_type == $type && defined(slug.current)].slug.current`,
+			{ type },
+			{ next: { revalidate: 3600, tags: [type, 'sitemap'] } },
+		)
+
+		if (!Array.isArray(slugs)) return []
+
+		return [...new Set(slugs.filter((slug): slug is string => typeof slug === 'string' && slug.length > 0))]
+	} catch {
+		return []
+	}
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 	const baseUrl = 'https://elektrykmajkel.pl'
-	const staticLastModified = new Date('2026-01-01T00:00:00.000Z')
+	const staticLastModified = new Date()
 
 	const [citySlugs, blogSlugs, serviceSlugs] = await Promise.all([
-		getAllCitySlugs().catch(() => []),
-		getAllBlogSlugs().catch(() => []),
-		getAllServicePageSlugs().catch(() => []),
+		fetchSlugs('mapCity'),
+		fetchSlugs('blogPost'),
+		fetchSlugs('servicePage'),
 	])
 
 	const cityPages = citySlugs.map(slug => ({
 		url: `${baseUrl}/uslugi/elektryk-${slug}`,
+		lastModified: staticLastModified,
 		changeFrequency: 'monthly' as const,
 		priority: 0.7,
 	}))
 
 	const blogPages = blogSlugs.map(slug => ({
 		url: `${baseUrl}/blog/${slug}`,
+		lastModified: staticLastModified,
 		changeFrequency: 'weekly' as const,
 		priority: 0.6,
 	}))
 
 	const servicePages = serviceSlugs.map(slug => ({
 		url: `${baseUrl}/uslugi/${slug}`,
+		lastModified: staticLastModified,
 		changeFrequency: 'monthly' as const,
 		priority: 0.8,
 	}))

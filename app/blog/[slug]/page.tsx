@@ -92,6 +92,35 @@ const portableTextComponents = {
 			<p className="text-gray-700 leading-relaxed mb-4">{children}</p>
 		),
 	},
+	list: {
+		bullet: ({ children }: { children?: React.ReactNode }) => (
+			<ul className="list-disc pl-6 mb-4 space-y-2 text-gray-700">{children}</ul>
+		),
+		number: ({ children }: { children?: React.ReactNode }) => (
+			<ol className="list-decimal pl-6 mb-4 space-y-2 text-gray-700">{children}</ol>
+		),
+	},
+	listItem: {
+		bullet: ({ children }: { children?: React.ReactNode }) => <li className="leading-relaxed">{children}</li>,
+		number: ({ children }: { children?: React.ReactNode }) => <li className="leading-relaxed">{children}</li>,
+	},
+	marks: {
+		strong: ({ children }: { children?: React.ReactNode }) => (
+			<strong className="font-semibold text-gray-900">{children}</strong>
+		),
+		em: ({ children }: { children?: React.ReactNode }) => <em className="italic">{children}</em>,
+		link: ({ children, value }: { children?: React.ReactNode; value?: { href?: string; blank?: boolean } }) => {
+			const href = value?.href || '#'
+			return (
+				<Link
+					href={href}
+					className="text-amber-700 hover:text-amber-800 underline font-medium"
+					{...(value?.blank ? { target: '_blank', rel: 'noopener noreferrer' } : {})}>
+					{children}
+				</Link>
+			)
+		},
+	},
 }
 
 // ─── Page component ──────────────────────────────────────

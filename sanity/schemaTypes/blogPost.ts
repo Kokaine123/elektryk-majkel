@@ -52,10 +52,39 @@ export const blogPost = defineType({
 						{ title: 'H2', value: 'h2' },
 						{ title: 'H3', value: 'h3' },
 					],
+					lists: [
+						{ title: 'Lista punktowana', value: 'bullet' },
+						{ title: 'Lista numerowana', value: 'number' },
+					],
 					marks: {
 						decorators: [
 							{ title: 'Bold', value: 'strong' },
 							{ title: 'Italic', value: 'em' },
+						],
+						annotations: [
+							{
+								name: 'link',
+								type: 'object',
+								title: 'Link',
+								fields: [
+									defineField({
+										name: 'href',
+										type: 'url',
+										title: 'URL',
+										validation: rule =>
+											rule.uri({
+												allowRelative: true,
+												scheme: ['http', 'https', 'mailto', 'tel'],
+											}),
+									}),
+									defineField({
+										name: 'blank',
+										type: 'boolean',
+										title: 'Otwórz w nowej karcie',
+										initialValue: false,
+									}),
+								],
+							},
 						],
 					},
 				},
