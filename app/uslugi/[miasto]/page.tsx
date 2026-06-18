@@ -19,6 +19,7 @@ import ServicePageView from './ServicePageView'
 const BlogSlider = dynamic(() => import('@/components/BlogSlider'))
 
 const siteUrl = 'https://elektrykmajkel.pl'
+const indexableCitySlugs = new Set(['stalowa-wola', 'sandomierz'])
 
 async function getGlobalOgImage(): Promise<{ url: string; alt: string }> {
 	let url = `${siteUrl}/logo.webp`
@@ -289,6 +290,7 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 	// City page
 	const slug = miasto.replace(/^elektryk-/, '')
 	const city = await getCityBySlug(slug)
+	const shouldIndexCity = indexableCitySlugs.has(slug)
 
 	if (!city) {
 		return { title: 'Nie znaleziono miasta', robots: { index: false, follow: false } }
@@ -342,7 +344,7 @@ export async function generateMetadata({ params }: { params: Promise<{ miasto: s
 			description,
 			images: [ogImage.url],
 		},
-		robots: { index: true, follow: true },
+		robots: { index: shouldIndexCity, follow: true },
 	}
 }
 

@@ -3,6 +3,8 @@ import { client } from '@/lib/sanity'
 
 export const revalidate = 3600
 
+const indexableCitySlugs = new Set(['stalowa-wola', 'sandomierz'])
+
 async function fetchSlugs(type: string): Promise<string[]> {
 	try {
 		const slugs = await client.fetch<string[]>(
@@ -29,12 +31,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 		fetchSlugs('servicePage'),
 	])
 
-	const cityPages = citySlugs.map(slug => ({
-		url: `${baseUrl}/uslugi/elektryk-${slug}`,
-		lastModified: staticLastModified,
-		changeFrequency: 'monthly' as const,
-		priority: 0.7,
-	}))
+	const cityPages = citySlugs
+		.filter(slug => indexableCitySlugs.has(slug))
+		.map(slug => ({
+			url: `${baseUrl}/uslugi/elektryk-${slug}`,
+			lastModified: staticLastModified,
+			changeFrequency: 'monthly' as const,
+			priority: 0.7,
+		}))
 
 	const blogPages = blogSlugs.map(slug => ({
 		url: `${baseUrl}/blog/${slug}`,

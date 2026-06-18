@@ -28,6 +28,24 @@ const client = createClient({
 
 type SpanPart = { text: string; bold?: boolean; link?: string }
 
+type BlogPostSeedDocument = {
+	_id: string
+	_type: 'blogPost'
+	title: string
+	slug: { _type: 'slug'; current: string }
+	excerpt: string
+	category: string
+	publishedAt: string
+	metaTitle: string
+	metaDescription: string
+	content: unknown[]
+	coverImage?: {
+		_type: 'image'
+		asset: { _type: 'reference'; _ref: string }
+		alt: string
+	}
+}
+
 function block(text: string, style = 'normal', key?: string) {
 	return {
 		_type: 'block' as const,
@@ -220,7 +238,7 @@ async function main() {
 		),
 	]
 
-	const doc: Record<string, unknown> = {
+	const doc: BlogPostSeedDocument = {
 		_id: 'blogPost-instalacje-stalowa-wola',
 		_type: 'blogPost',
 		title: 'Instalacje elektryczne w Stalowej Woli — Rozwadów i centrum miasta',
