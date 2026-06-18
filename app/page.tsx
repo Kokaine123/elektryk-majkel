@@ -27,6 +27,8 @@ import {
 } from '@/lib/queries'
 import { urlFor } from '@/lib/sanity'
 
+const visibleCitySlugs = new Set(['stalowa-wola', 'sandomierz'])
+
 function buildJsonLd(seo: Awaited<ReturnType<typeof getSeoSettings>>) {
 	const businessName = seo?.businessName || 'Elektryk Majkel'
 	const businessType = seo?.businessType || 'Electrician'
@@ -189,6 +191,7 @@ export default async function Home() {
 
 	const phone = contactInfo?.phone
 	const jsonLd = buildJsonLd(seoSettings)
+	const visibleMapCities = mapCities.filter(city => city.slug?.current && visibleCitySlugs.has(city.slug.current))
 
 	// AggregateRating + Review JSON-LD
 	const reviewsForSchema = reviews.length > 0 ? reviews : null
@@ -270,7 +273,7 @@ export default async function Home() {
 				)}
 				{show.map && (
 					<DeferredSection minHeight={420}>
-						<MapWrapper cities={mapCities.length > 0 ? mapCities : undefined} />
+						<MapWrapper cities={visibleMapCities.length > 0 ? visibleMapCities : undefined} />
 					</DeferredSection>
 				)}
 				{show.reviews && (

@@ -31,19 +31,7 @@ const hqLabelIcon = new L.DivIcon({
 })
 
 const DEFAULT_CITIES: { name: string; position: L.LatLngExpression }[] = [
-	{ name: 'Rzeszów', position: [50.0412, 21.9991] },
-	{ name: 'Lublin', position: [51.2465, 22.5684] },
-	{ name: 'Kielce', position: [50.8661, 20.6286] },
-	{ name: 'Tarnów', position: [50.0121, 20.9858] },
-	{ name: 'Zamość', position: [50.7231, 23.2519] },
-	{ name: 'Przemyśl', position: [49.7838, 22.7678] },
-	{ name: 'Tarnobrzeg', position: [50.5731, 21.679] },
 	{ name: 'Sandomierz', position: [50.6826, 21.7489] },
-	{ name: 'Mielec', position: [50.2874, 21.4249] },
-	{ name: 'Jarosław', position: [50.0162, 22.6933] },
-	{ name: 'Dębica', position: [50.05, 21.4119] },
-	{ name: 'Kraśnik', position: [50.9247, 22.2267] },
-	{ name: 'Nisko', position: [50.5197, 22.1397] },
 	{ name: 'Stalowa Wola', position: [50.5829, 22.0537] },
 ]
 

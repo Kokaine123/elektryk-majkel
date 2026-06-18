@@ -2,6 +2,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { getContactInfo, getMapCities, getSiteSettings } from '@/lib/queries'
 
+const visibleCitySlugs = new Set(['stalowa-wola', 'sandomierz'])
+
 export default async function Footer() {
 	let phone = '+48 537 751 820'
 	let email = 'elektryk.majkel@gmail.com'
@@ -23,7 +25,7 @@ export default async function Footer() {
 	let cities: { _id: string; name: string; slug?: { current: string } }[] = []
 	try {
 		const fetched = await getMapCities()
-		cities = fetched.filter(c => c.slug?.current)
+		cities = fetched.filter(c => c.slug?.current && visibleCitySlugs.has(c.slug.current))
 	} catch {
 		// no cities
 	}
