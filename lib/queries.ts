@@ -396,9 +396,9 @@ const fallbackBlogPostsQuery = groq`
 `
 
 export async function getRelatedBlogPosts(slug: string, category: string): Promise<SanityBlogPost[]> {
-	const related = await sanityFetch(relatedBlogPostsQuery, { slug, category }, ['blogPost'])
+	const related = await sanityFetch<SanityBlogPost[]>(relatedBlogPostsQuery, { slug, category }, ['blogPost'])
 	if (related.length > 0) return related
-	return sanityFetch(fallbackBlogPostsQuery, { slug }, ['blogPost'])
+	return sanityFetch<SanityBlogPost[]>(fallbackBlogPostsQuery, { slug }, ['blogPost'])
 }
 
 const blogSlugsQuery = groq`
