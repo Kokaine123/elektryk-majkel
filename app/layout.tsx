@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import { draftMode } from 'next/headers'
 import SanityVisualEditing from '@/components/SanityVisualEditing'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import CookieConsent from '@/components/CookieConsent'
 import Analytics from '@/components/Analytics'
 import './globals.css'
@@ -198,6 +199,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 				{children}
 				{isDraft && <SanityVisualEditing />}
 				<Analytics gaId={gaId} gtmId={gtmId} fbPixelId={fbPixelId} />
+				<SpeedInsights />
 				<CookieConsent />
 			</body>
 		</html>
